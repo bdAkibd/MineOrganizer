@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -47,7 +48,37 @@ def scan_saves(library_dir: Path) -> list[SaveEntry]:
 
 
 def import_save(source: Path, library_dir: Path) -> tuple[bool, str]:
-    """Copy a world folder into the library without overwriting an existing world."""
+    """Copy a world folder or extract a world archive into the library without overwriting an existing world."""
+    if source.is_file() and source.suffix.lower() == ".zip":
+        try:
+            with zipfile.ZipFile(source) as archive:
+                names = archive.namelist()
+                level_dat_entry = next((n for n in names if n.replace("\\", "/").rstrip("/").split("/")[-1] == "level.dat"), None)
+                if not level_dat_entry:
+                    return False, "The archive does not contain a level.dat file (not a Minecraft world)."
+
+                parts = Path(level_dat_entry.replace("\\", "/")).parts
+                library_dir.mkdir(parents=True, exist_ok=True)
+                if len(parts) > 1:
+                    world_folder = parts[0]
+                    destination = library_dir / world_folder
+                    if destination.exists():
+                        return False, f'Save "{world_folder}" already exists in the library.'
+                    for member in archive.infolist():
+                        norm = member.filename.replace("\\", "/")
+                        if norm.startswith(world_folder + "/") or norm == world_folder:
+                            archive.extract(member, library_dir)
+                else:
+                    world_folder = source.stem
+                    destination = library_dir / world_folder
+                    if destination.exists():
+                        return False, f'Save "{world_folder}" already exists in the library.'
+                    destination.mkdir(parents=True, exist_ok=True)
+                    archive.extractall(destination)
+                return True, f"Save imported: {destination}"
+        except (OSError, zipfile.BadZipFile) as error:
+            return False, f"Could not extract save archive: {error}"
+
     if not source.is_dir():
         return False, "The selected directory is not a Minecraft save."
     library_dir.mkdir(parents=True, exist_ok=True)

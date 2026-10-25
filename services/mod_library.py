@@ -25,6 +25,15 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def file_sha1(path: Path) -> str:
+    """Compute a file SHA-1 digest using streaming reads."""
+    digest = hashlib.sha1()
+    with path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def scan_mods(library_dir: Path) -> list[ModFile]:
     """Return JAR files from the library without modifying files."""
     if not library_dir.is_dir():

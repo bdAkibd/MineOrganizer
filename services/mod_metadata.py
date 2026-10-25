@@ -34,6 +34,7 @@ class ModMetadata:
     required_mod_ids: list[str] = field(default_factory=list)
     source: str = ""
     kind: str = "Mod"
+    icon_bytes: bytes | None = None
 
 
 def read_mod_metadata(path: Path) -> ModMetadata:
@@ -44,6 +45,7 @@ def read_mod_metadata(path: Path) -> ModMetadata:
             raise zipfile.BadZipFile
         with zipfile.ZipFile(path) as archive:
             names = set(archive.namelist())
+            icon_name = ""
             if "plugin.yml" in names:
                 try:
                     plugin_text = archive.read("plugin.yml").decode("utf-8-sig")
@@ -68,6 +70,14 @@ def read_mod_metadata(path: Path) -> ModMetadata:
                     result.source = "Fabric metadata"
                     result.loader_ids.append("fabric")
                     _collect_json_dependencies(data.get("depends"), result)
+                    icon_val = data.get("icon")
+                    if isinstance(icon_val, str):
+                        icon_name = icon_val
+                    elif isinstance(icon_val, dict) and icon_val:
+                        try:
+                            icon_name = str(sorted(icon_val.items(), key=lambda kv: int(kv[0]) if str(kv[0]).isdigit() else 0)[-1][1])
+                        except Exception:
+                            icon_name = str(list(icon_val.values())[-1])
             elif "quilt.mod.json" in names:
                 data = _read_json(archive, "quilt.mod.json")
                 if isinstance(data, dict):
@@ -83,6 +93,14 @@ def read_mod_metadata(path: Path) -> ModMetadata:
                     result.source = "Quilt metadata"
                     result.loader_ids.append("quilt")
                     _collect_json_dependencies(quilt.get("depends"), result)
+                    icon_val = metadata.get("icon") or quilt.get("icon")
+                    if isinstance(icon_val, str):
+                        icon_name = icon_val
+                    elif isinstance(icon_val, dict) and icon_val:
+                        try:
+                            icon_name = str(sorted(icon_val.items(), key=lambda kv: int(kv[0]) if str(kv[0]).isdigit() else 0)[-1][1])
+                        except Exception:
+                            icon_name = str(list(icon_val.values())[-1])
             else:
                 toml_name = next((name for name in ("META-INF/neoforge.mods.toml", "META-INF/mods.toml") if name in names), "")
                 if toml_name:
@@ -95,6 +113,9 @@ def read_mod_metadata(path: Path) -> ModMetadata:
                         result.mod_id = str(first.get("modId") or "")
                         result.name = str(first.get("displayName") or result.name)
                         result.version = _clean_version(first.get("version"))
+                        logo_file = first.get("logoFile")
+                        if isinstance(logo_file, str) and logo_file:
+                            icon_name = logo_file
                     for section in data.get("dependencies", {}).values() if isinstance(data.get("dependencies"), dict) else []:
                         if not isinstance(section, list):
                             continue
@@ -121,6 +142,26 @@ def read_mod_metadata(path: Path) -> ModMetadata:
                         if mcversion:
                             result.minecraft_ranges.append(mcversion)
                         result.loader_ids.append("forge")
+                        logo_file = first.get("logoFile")
+                        if isinstance(logo_file, str) and logo_file:
+                            icon_name = logo_file
+
+            if icon_name:
+                cleaned = icon_name.lstrip("/").replace("\\", "/")
+                if cleaned in names:
+                    result.icon_bytes = archive.read(cleaned)
+                else:
+                    for name in names:
+                        if name.endswith("/" + cleaned) or name == cleaned:
+                            result.icon_bytes = archive.read(name)
+                            break
+            if not result.icon_bytes:
+                for fallback in ("icon.png", "logo.png", "pack.png"):
+                    if fallback in names:
+                        result.icon_bytes = archive.read(fallback)
+                        break
+            if result.icon_bytes and len(result.icon_bytes) > 2 * 1024 * 1024:
+                result.icon_bytes = None
     except (OSError, zipfile.BadZipFile, UnicodeDecodeError, json.JSONDecodeError, tomllib.TOMLDecodeError, RuntimeError):
         # Keep the result and continue with the hash and filename fallbacks.
         pass

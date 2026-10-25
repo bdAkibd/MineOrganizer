@@ -54,6 +54,18 @@ class ModMetadataTests(unittest.TestCase):
             status, _ = compatibility_for_profile(metadata, "1.19.4", "fabric")
             self.assertEqual(status, "Incompatible")
 
+    def test_reads_fabric_icon(self):
+        with tempfile.TemporaryDirectory() as directory:
+            jar = Path(directory) / "example-icon.jar"
+            with zipfile.ZipFile(jar, "w") as archive:
+                archive.writestr("fabric.mod.json", json.dumps({
+                    "id": "iconmod", "name": "Icon Mod", "version": "1.0",
+                    "icon": "assets/iconmod/icon.png",
+                }))
+                archive.writestr("assets/iconmod/icon.png", b"fake_png_data")
+            metadata = read_mod_metadata(jar)
+            self.assertEqual(metadata.icon_bytes, b"fake_png_data")
+
     def test_reads_quilt_metadata(self):
         with tempfile.TemporaryDirectory() as directory:
             jar = Path(directory) / "quilt.jar"

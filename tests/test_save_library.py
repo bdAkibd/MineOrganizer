@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 from services.save_library import import_save, install_save, scan_saves
@@ -38,3 +39,17 @@ class SaveLibraryTests(unittest.TestCase):
             success, _ = install_save(source, root / "instance")
             self.assertFalse(success)
             self.assertEqual((instance / "level.dat").read_text(encoding="utf-8"), "old")
+
+    def test_import_save_from_zip(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive_path = root / "AdventureWorld.zip"
+            with zipfile.ZipFile(archive_path, "w") as archive:
+                archive.writestr("AdventureWorld/level.dat", "world_data")
+                archive.writestr("AdventureWorld/data/test.txt", "data")
+            library = root / "library"
+
+            success, msg = import_save(archive_path, library)
+            self.assertTrue(success)
+            self.assertEqual([entry.name for entry in scan_saves(library)], ["AdventureWorld"])
+            self.assertEqual((library / "AdventureWorld" / "level.dat").read_text(encoding="utf-8"), "world_data")
