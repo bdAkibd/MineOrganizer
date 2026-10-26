@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <style>
-body { font-family: sans-serif; line-height: 1.45; margin: 14px; }
-h1 { margin-top: 0; } h2 { margin-top: 24px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); }
+body { font-family: sans-serif; line-height: 1.45; margin: 16px; max-width: 960px; }
+h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+li { margin: 5px 0; }
+code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
 </style>
 </head>
 <body>
-<h1>Manual de usuario de MineOrganizer</h1><p>MineOrganizer gestiona entornos de Minecraft, mods, mundos guardados, paquetes de recursos, shaders, perfiles, archivos de configuración y copias de seguridad en un espacio de trabajo común.</p>
-<h2>Para qué sirve</h2><p>Permite gestionar instalaciones de Prism Launcher, CurseForge, el lanzador oficial, TLauncher e instalaciones antiguas; mantener una biblioteca de archivos JAR de mods; instalar mundos mediante saves; aplicar perfiles; comprobar entornos y revertir cambios; y guardar o restaurar configuraciones.</p>
-<p class="note"><b>Seguridad:</b> La vista previa y las comprobaciones solo leen datos. Cierra Minecraft antes de aplicar perfiles, instalar recursos, restaurar copias de seguridad o modificar archivos de un entorno activo.</p>
-<h2>Primer inicio</h2><p>Abre Settings → Language selection y elige el idioma. En una instalación nueva, el inglés es el predeterminado. Elige un tema claro u oscuro en View. Abre Game environments y pulsa Refresh. Si no se detecta una instalación, usa Add game folder, Choose Prism folder o crea una instancia para el lanzador oficial.</p>
-<h2>Entornos de juego</h2><p>La tabla muestra el origen, nombre del entorno, versión de Minecraft, cargador, versión del cargador y estado. Prism usa su directorio configurado. CurseForge usa %USERPROFILE%\curseforge\minecraft\Instances. En instalaciones antiguas, la versión y el cargador pueden obtenerse del nombre de la carpeta o de metadatos JSON. Actualiza la lista después de realizar cambios externos.</p>
-<h2>Biblioteca de mods</h2><p>Pulsa Import JAR y selecciona archivos; los originales se copian en la biblioteca. Filtra por versión de Minecraft, cargador o compatibilidad. El menú contextual permite consultar, quitar o asignar un mod a un perfil cuando sea compatible. Pulsa Refresh library después de cambiar archivos fuera del programa.</p>
-<h2>Detección de versiones</h2><p>Primero se usan los metadatos del mod. Si están incompletos, también se examina el nombre del archivo, por ejemplo mc1.20.1, 1.20.1-forge, dynamiclights-1.20.1.2 o +1.20.1. Un mod compatible con varias versiones aparece como una sola entrada con varias versiones compatibles.</p>
-<h2>Cambiar manualmente la versión de Minecraft</h2><p>Selecciona el mod y usa Edit Minecraft version…. Introduce una versión como 1.20.1 o varias separadas por comas, como 1.20.1, 1.21. También se aceptan rangos como [1.20,1.21). Deja el campo vacío para borrar la sobrescritura. Se guarda para ese archivo y no modifica el JAR.</p>
-<h2>Mundos guardados</h2><p>La pestaña Saves gestiona mundos del entorno seleccionado. Elige un entorno o perfil, importa un archivo comprimido o carpeta de mundo e instálalo. MineOrganizer lo coloca en saves. Haz una copia de seguridad de los mundos importantes antes de reemplazar un guardado con el mismo nombre.</p>
-<h2>Perfiles</h2><p>Un perfil es una selección con nombre de mods y recursos para un entorno. Elige Instance for new profile, pulsa Create profile y escribe un nombre. Usa Edit mods para seleccionar mods compatibles. Rename y Delete profile permiten mantener la lista.</p>
-<h2>Aplicar un perfil</h2><p>Selecciona el perfil en la sección de virtualización, pulsa Preview y revisa las acciones. Usa Apply profile solo cuando la vista previa sea correcta. Rollback last application deshace el último cambio gestionado. Check conflicts ayuda si se han cambiado archivos manualmente. No se sobrescriben archivos normales ajenos al perfil.</p>
-<h2>Comprobación del entorno</h2><p>La pestaña informa de archivos de Minecraft detectados, cargadores, mods externos y compatibilidad. No modifica el entorno y resulta útil para diagnosticar problemas.</p>
-<h2>Paquetes de recursos y shaders</h2><p>Selecciona Resource packs o Shaders e importa archivos con Import ZIP. Usa Choose for profile para incluir recursos en un perfil. Preview, Apply assets y Rollback assets funcionan como en la virtualización. Los enlaces se colocan en resourcepacks o shaderpacks y no sobrescriben archivos normales existentes.</p>
-<h2>Configuraciones y copias de seguridad</h2><p>Backup crea un archivo con fecha y hora de la carpeta config del entorno. Si no existe, el programa lo indica. Para restaurar, selecciona una copia y usa Restore; cierra Minecraft primero. Actualiza la tabla tras añadir o eliminar archivos externos.</p>
-<h2>Flujo recomendado</h2><p>Actualiza y verifica el entorno, importa mods y recursos, crea un perfil, selecciona contenido compatible y revisa la vista previa. Guarda una copia de seguridad de la configuración antes de cambios importantes. Cierra Minecraft, aplica el perfil y prueba el juego. Si hay problemas, utiliza Rollback o Restore.</p>
-<h2>Solución de problemas y límites</h2><p>Si falta un entorno, actualiza o añade manualmente la carpeta del juego. Si un mod no tiene versión, revisa los metadatos y el nombre del archivo. Si queda filtrado, comprueba la versión de Minecraft y el cargador. Si falla la aplicación, cierra Minecraft y revisa la vista previa, los conflictos y los permisos de escritura. MineOrganizer no instala cargadores ni descarga mods en línea, y no garantiza la compatibilidad de mods de terceros. Conserva copias independientes de mundos y configuraciones importantes.</p>
+<h1>Manual de usuario de MineOrganizer</h1>
+<p>MineOrganizer gestiona entornos de juego de Minecraft, mods, partidas guardadas, paquetes de recursos, shaders, perfiles, archivos de configuración y copias de seguridad en un solo lugar.</p>
+
+<h2>Propósito del programa</h2>
+<p>Permite administrar instalaciones de Prism Launcher, CurseForge, el lanzador oficial y carpetas personalizadas; gestionar una biblioteca de mods con arrastrar y soltar (Drag &amp; Drop) e iconos en caché; buscar, descargar y actualizar mods mediante el catálogo integrado de Modrinth; detectar dependencias faltantes; diagnosticar fallos del juego con el analizador de registros y crash reports; exportar e importar modpacks completos (mods, configuraciones, shaders, texturas y partidas); y gestionar copias de seguridad de forma segura.</p>
+<p class="note"><b>Seguridad:</b> Cierre Minecraft antes de aplicar perfiles, instalar recursos o restaurar copias de seguridad.</p>
+
+<h2>Biblioteca de mods y Drag &amp; Drop</h2>
+<p>Arrastre archivos JAR directamente a la tabla de la biblioteca. Las miniaturas y metadatos se extraen y almacenan en caché automáticamente. Dispone de búsqueda rápida en vivo y filtros por versión de Minecraft y cargador.</p>
+
+<h2>Catálogo Modrinth y Actualizaciones</h2>
+<ul>
+  <li><b>Catálogo Modrinth:</b> Busque e instale mods compatibles directamente en la aplicación.</li>
+  <li><b>Comprobar actualizaciones:</b> Verifique hashes con Modrinth y descargue actualizaciones con un solo clic.</li>
+</ul>
+
+<h2>Perfiles y Dependencias</h2>
+<p>Cree perfiles para sus instalaciones. MineOrganizer detecta dependencias faltantes (como Fabric API) y facilita su instalación inmediata desde Modrinth.</p>
+
+<h2>Exportar e Importar Modpacks</h2>
+<p>Exporte perfiles a <code>.morgpack</code> o <code>.zip</code> incluyendo mods, configuraciones (<code>config</code>), paquetes de recursos, shaders y mundos (<code>saves</code>). Al importar, la сборка se configura automáticamente lista para jugar.</p>
+
+<h2>Analizador de Crash Reports y Registros</h2>
+<p>En caso de fallo, abra el analizador para revisar <code>crash-reports</code> o <code>latest.log</code>. El sistema detecta mods problemáticos, dependencias ausentes o problemas de memoria, ofreciendo soluciones sugeridas.</p>
+
+<h2>Recursos, Partidas y Rendimiento</h2>
+<p>Soporte para arrastrar y soltar mundos, texturas y shaders. La indexación en caché permite un arranque instantáneo incluso con miles de mods.</p>
 </body>
 </html>

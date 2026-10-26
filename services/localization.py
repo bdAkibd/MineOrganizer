@@ -368,6 +368,10 @@ ENGLISH_TRANSLATIONS: Final[dict[str, str]] = {
     "Миров:": "Worlds:",
     "Модпак успешно экспортирован:\n": "Modpack successfully exported:\n",
     "Модпак «{name}» успешно импортирован!\n": "Modpack \"{name}\" successfully imported!\n",
+    "Каталог Modrinth": "Modrinth catalog",
+    "Проверить обновления": "Check updates",
+    "Поиск в Modrinth…": "Search Modrinth…",
+    "Импортировано: {imported}\nПропущено: {skipped}\n\nПодсказка: Выберите профиль, чтобы перетащенные моды добавились в него автоматически.": "Imported: {imported}\nSkipped: {skipped}\n\nTip: Select a profile to automatically assign dragged mods to it.",
 }
 
 RUSSIAN_TRANSLATIONS: Final[dict[str, str]] = {

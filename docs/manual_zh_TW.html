@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <style>
-body { font-family: sans-serif; line-height: 1.45; margin: 14px; }
-h1 { margin-top: 0; } h2 { margin-top: 24px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); }
+body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+li { margin: 5px 0; }
+code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
 </style>
 </head>
 <body>
-<h1>MineOrganizer 使用者手冊</h1><p>MineOrganizer 是一款桌面工具，用來集中管理 Minecraft 遊戲環境、模組、世界存檔、資源包、光影、設定檔、設定檔案與備份，協助你安全地切換整套內容。</p>
-<h2>程式用途</h2><p>可用來管理 Prism Launcher、CurseForge、官方啟動器、TLauncher 與舊版安裝環境；維護可搜尋的模組 JAR 庫；透過 saves 資料夾安裝世界；套用設定檔；檢查環境並復原受管理的變更；備份與還原設定檔案。</p>
-<p class="note"><b>安全提醒:</b> 預覽與環境檢查皆為唯讀操作。套用設定檔、安裝資源、還原備份或修改使用中的環境檔案前，請先關閉 Minecraft。</p>
-<h2>首次啟動</h2><p>開啟 Settings → Language selection 選擇介面語言。新安裝預設使用英文。可在 View 中選擇淺色或深色主題。開啟 Game environments 並按下 Refresh。若未偵測到安裝環境，請使用 Add game folder、Choose Prism folder，或為官方啟動器建立執行個體。</p>
-<h2>遊戲環境</h2><p>表格顯示來源、環境名稱、Minecraft 版本、載入器、載入器版本與狀態。Prism 使用已設定的 Prism 目錄。CurseForge 使用 %USERPROFILE%\curseforge\minecraft\Instances。舊版安裝可能從資料夾名稱或 JSON 中繼資料讀取版本與載入器資訊。外部安裝或移除執行個體後請重新整理。</p>
-<h2>模組庫</h2><p>按下 Import JAR 並選取一個或多個模組檔案，原始檔案會複製到模組庫。可依 Minecraft 版本、載入器或相容性篩選。右鍵選單可檢視詳細資料、從庫中移除，或在支援時指派給設定檔。在程式外變更庫檔案後，按下 Refresh library。</p>
-<h2>版本偵測</h2><p>程式會優先讀取模組中繼資料。若資料不完整，也會檢查檔名，例如 mc1.20.1、1.20.1-forge、dynamiclights-1.20.1.2 與 +1.20.1。支援多個 Minecraft 版本的模組會以單一項目顯示，並列出多個相容版本，不會因選取設定檔版本而重複。</p>
-<h2>手動指定 Minecraft 版本</h2><p>選取模組並使用 Edit Minecraft version…。可輸入單一版本（例如 1.20.1），或以逗號分隔多個版本（例如 1.20.1, 1.21）。也接受 [1.20,1.21) 這類版本範圍。清空欄位即可取消手動指定。設定會針對該檔案保存，不會修改 JAR 本身。</p>
-<h2>世界存檔</h2><p>Saves 分頁管理所選環境的 Minecraft 世界。選取環境或設定檔，將世界封存檔或資料夾匯入存檔庫並安裝。MineOrganizer 會將其放入 saves 目錄。取代同名存檔前，請先備份重要世界。</p>
-<h2>設定檔</h2><p>設定檔是為某個遊戲環境命名保存的一組模組與相關資源。透過 Instance for new profile 選擇目標環境，按下 Create profile 並輸入名稱。使用 Edit mods 選擇相容模組。透過 Rename 或 Delete profile 管理清單。</p>
-<h2>套用設定檔</h2><p>在虛擬化區域選取設定檔，按下 Preview 並檢查每項操作。確認預覽正確後再按 Apply profile。Rollback last application 可復原最近一次受管理的變更。若目標資料夾內有手動修改，請使用 Check conflicts。程式不會覆寫無關的一般檔案。</p>
-<h2>環境檢查</h2><p>此分頁會回報偵測到的 Minecraft 檔案、載入器資訊、外部模組與相容性細節。檢查不會修改環境，可用於診斷模組無法使用等問題。</p>
-<h2>資源包與光影</h2><p>選擇 Resource packs 或 Shaders，使用 Import ZIP 將封存檔複製到獨立資源庫。使用 Choose for profile 將資源加入設定檔。Preview、Apply assets 與 Rollback assets 的使用方式與設定檔虛擬化相同。資源會連結至 resourcepacks 或 shaderpacks 資料夾，不會覆寫現有一般檔案。</p>
-<h2>設定與備份</h2><p>Backup 會將所選環境的 config 資料夾封存並加上時間戳記。若資料夾不存在，程式會提示且不會建立誤導性的備份。選取既有備份並使用 Restore 可還原設定；請先關閉 Minecraft。在程式外新增或刪除封存檔後請重新整理清單。</p>
-<h2>建議工作流程</h2><p>重新整理並確認目標環境；將模組、存檔、資源包與光影匯入各自的資料庫；建立設定檔；選取相容內容並預覽變更；重大修改前備份設定；關閉 Minecraft 後套用設定檔並測試遊戲。如有問題，關閉遊戲並使用 Rollback 或 Restore。</p>
-<h2>疑難排解與限制</h2><p>環境遺失時請重新整理清單或手動加入遊戲目錄。模組沒有版本時請檢查中繼資料與檔名。模組被篩選隱藏時請檢查 Minecraft 版本與載入器。套用失敗時請關閉 Minecraft，檢查預覽、衝突與目標資料夾寫入權限。MineOrganizer 不會安裝 Minecraft 載入器、不會從線上服務下載模組，也不保證第三方模組相容。請另外備份重要世界與設定。</p>
+<h1>MineOrganizer 使用者手冊</h1>
+<p>MineOrganizer 是一套集中管理 Minecraft 遊戲環境、模組 (Mod)、世界存檔 (Saves)、材質包、光影包、設定檔與備份的桌面管理工具。</p>
+
+<h2>核心功能</h2>
+<p>支援管理 Prism Launcher、CurseForge、官方啟動器與自訂遊戲目錄；提供拖放匯入 (Drag &amp; Drop) 與圖示快取的高效能模組庫；內建 <b>Modrinth 模組庫</b> 直接搜尋、下載與一鍵檢查更新；自動偵測設定檔中缺少的依賴模組；內建<b>當機與記錄檔分析器</b>快速排查遊戲閃退原因；支援匯出與匯入完整模組包（包含模組、<code>config</code> 設定、光影、材質與世界存檔）；安全的虛擬連結與設定備份。</p>
+<p class="note"><b>安全提示：</b> 套用設定檔、安裝資源或還原備份前，請務必先關閉 Minecraft 遊戲客戶端。</p>
+
+<h2>模組庫與拖放匯入</h2>
+<p>只需將模組 JAR 檔案從檔案總管拖曳至表格中即可立即匯入。系統自動提取中繼資料並快取圖示，支援依 Minecraft 版本與載入器即時篩選。</p>
+
+<h2>Modrinth 模組庫與自動更新</h2>
+<ul>
+  <li><b>Modrinth 模組庫：</b> 無須開啟瀏覽器，直接在程式內搜尋並下載相容模組。</li>
+  <li><b>檢查更新：</b> 自動比對檔案雜湊值，一鍵批次下載最新版本。</li>
+</ul>
+
+<h2>設定檔與相依性解析</h2>
+<p>為遊戲環境建立專屬方案。若選取的模組缺少必要的前置依賴（如 Fabric API），程式會在相容性欄位提示並支援一鍵搜尋下載。</p>
+
+<h2>模組包匯出與匯入</h2>
+<p>可將設定檔封裝為 <code>.morgpack</code> 或 <code>.zip</code> 格式，並自訂是否包含模組、設定檔資料夾 (<code>config</code>)、光影包、材質包與世界存檔 (<code>saves</code>)。匯入時自動解壓縮並設定就緒。</p>
+
+<h2>當機報告與記錄檔分析</h2>
+<p>當遊戲發生錯誤時，透過分析器讀取 <code>crash-reports</code> 或 <code>latest.log</code>，自動判斷引發當機的模組、依賴缺失、Java 相容性問題或記憶體不足 (OutOfMemory)，並提供清楚的修復指引。</p>
+
+<h2>存檔、光影與高效能快取</h2>
+<p>存檔、光影與材質包皆支援拖放匯入。本機硬碟持久化雜湊快取確保即使管理數千個模組也能秒速載入。</p>
 </body>
 </html>

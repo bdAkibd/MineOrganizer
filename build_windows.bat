@@ -20,7 +20,7 @@ call ".venv-build\Scripts\python.exe" -m pip install -r requirements-build.txt
 if errorlevel 1 goto :error
 call ".venv-build\Scripts\python.exe" -m unittest discover -v
 if errorlevel 1 goto :error
-call ".venv-build\Scripts\python.exe" -m PyInstaller --noconfirm --windowed --onefile --name MineOrganizer --icon MOrg.ico --add-data "MOrg.ico;." main.py
+call ".venv-build\Scripts\python.exe" -m PyInstaller --noconfirm --windowed --onefile --name MineOrganizer --icon MOrg.ico --add-data "MOrg.ico;." --add-data "docs;docs" main.py
 if errorlevel 1 goto :error
 
 set "ISCC="

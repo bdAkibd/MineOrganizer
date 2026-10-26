@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <style>
-body { font-family: sans-serif; line-height: 1.45; margin: 14px; }
-h1 { margin-top: 0; } h2 { margin-top: 24px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); }
+body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+li { margin: 5px 0; }
+code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
 </style>
 </head>
 <body>
-<h1>MineOrganizer ユーザーマニュアル</h1><p>MineOrganizer は Minecraft のゲーム環境、Mod、ワールド保存データ、リソースパック、シェーダー、プロファイル、設定ファイル、バックアップを一つの作業スペースで管理するデスクトップアプリです。</p>
-<h2>このプログラムについて</h2><p>Prism Launcher、CurseForge、公式ランチャー、TLauncher、旧式のインストール環境を管理し、Mod の JAR ライブラリを整理し、saves フォルダー経由でワールドをインストールし、プロファイルを適用し、環境の確認や変更の取り消し、設定のバックアップと復元を行えます。</p>
-<p class="note"><b>安全上の注意:</b> プレビューと環境チェックは読み取り専用です。プロファイルの適用、アセットのインストール、バックアップの復元、使用中の環境のファイル変更を行う前に Minecraft を終了してください。</p>
-<h2>初回起動</h2><p>Settings → Language selection を開いて言語を選択します。新規インストールでは英語が既定です。View でライトまたはダークテーマを選びます。Game environments を開いて Refresh を押してください。環境が見つからない場合は Add game folder、Choose Prism folder、または公式ランチャー用インスタンスの作成を使用します。</p>
-<h2>ゲーム環境</h2><p>表にはソース、環境名、Minecraft のバージョン、ローダーとそのバージョン、状態が表示されます。Prism は設定済みの Prism ディレクトリを使用します。CurseForge の場所は %USERPROFILE%\curseforge\minecraft\Instances です。旧式の環境ではフォルダー名や JSON メタデータから情報を取得する場合があります。外部で変更した後は一覧を更新してください。</p>
-<h2>Mod ライブラリ</h2><p>Import JAR を押して Mod ファイルを選択すると、元のファイルがライブラリにコピーされます。Minecraft バージョン、ローダー、互換性で絞り込めます。コンテキストメニューから詳細確認、削除、対応している場合はプロファイルへの割り当てができます。外部で変更した後は Refresh library を押します。</p>
-<h2>バージョン検出</h2><p>まず Mod のメタデータを使用します。不完全な場合は mc1.20.1、1.20.1-forge、dynamiclights-1.20.1.2、+1.20.1 などのファイル名も調べます。複数の Minecraft バージョンに対応する Mod は、互換バージョンを複数持つ一つの項目として扱われます。</p>
-<h2>Minecraft バージョンの手動指定</h2><p>Mod を選択して Edit Minecraft version… を使用します。1.20.1 のような単一バージョン、または 1.20.1, 1.21 のようにカンマ区切りの複数バージョンを入力できます。[1.20,1.21) のような範囲も使用できます。空欄にすると手動指定が解除されます。この設定は対象ファイルに保存され、JAR 自体は変更しません。</p>
-<h2>ワールド保存データ</h2><p>Saves タブでは選択した環境のワールドを管理します。環境またはプロファイルを選び、ワールドのアーカイブやフォルダーをライブラリにインポートしてインストールします。MineOrganizer は saves フォルダーに配置します。同名の保存データを置き換える前に大切なワールドをバックアップしてください。</p>
-<h2>プロファイル</h2><p>プロファイルは、ゲーム環境向けの Mod と関連アセットの名前付きセットです。Instance for new profile で環境を選び、Create profile で名前を設定します。Edit mods で互換性のある Mod を選択します。Rename と Delete profile で一覧を管理します。</p>
-<h2>プロファイルの適用</h2><p>仮想化セクションでプロファイルを選び、Preview で各操作を確認します。内容に問題がない場合のみ Apply profile を使用してください。Rollback last application は直近の管理対象変更を取り消します。手動でファイルを変更した場合は Check conflicts を使います。関係のない通常ファイルは上書きされません。</p>
-<h2>環境の確認</h2><p>このタブでは検出された Minecraft ファイル、ローダー情報、外部 Mod、互換性を確認できます。環境を変更せず、問題の診断に役立ちます。</p>
-<h2>リソースパックとシェーダー</h2><p>Resource packs または Shaders を選び、Import ZIP でアーカイブを取り込みます。Choose for profile でプロファイルに追加できます。Preview、Apply assets、Rollback assets はプロファイルの仮想化と同様に使用します。リンクは resourcepacks または shaderpacks に作成され、既存の通常ファイルは上書きされません。</p>
-<h2>設定とバックアップ</h2><p>Backup は選択した環境の config フォルダーを日時付きアーカイブにします。フォルダーがない場合は通知します。復元するにはバックアップを選択して Restore を使います。先に Minecraft を終了してください。外部でアーカイブを変更した後は一覧を更新します。</p>
-<h2>推奨される手順</h2><p>対象環境を更新して確認し、Mod とリソースをインポートしてプロファイルを作成します。互換性のある内容を選び、変更プレビューを確認してください。大きな変更の前に設定をバックアップします。Minecraft を終了してプロファイルを適用し、ゲームを起動してテストします。問題があれば Rollback または Restore を使用します。</p>
-<h2>トラブルシューティングと制限</h2><p>環境がない場合は一覧を更新するかゲームフォルダーを手動で追加します。Mod のバージョンが不明な場合はメタデータとファイル名を確認します。フィルターで非表示の場合は Minecraft のバージョンとローダーを確認します。適用に失敗した場合は Minecraft を終了し、プレビュー、競合、書き込み権限を確認します。MineOrganizer はローダーのインストールやオンラインからの Mod ダウンロードを行わず、第三者 Mod の互換性も保証しません。重要なワールドと設定は別途バックアップしてください。</p>
+<h1>MineOrganizer ユーザーマニュアル</h1>
+<p>MineOrganizer は、Minecraft のゲーム環境、MOD、ワールドセーブ、リソースパック、シェーダー、プロファイル、設定ファイル、バックアップを一元管理できるデスクトップアプリケーションです。</p>
+
+<h2>主な機能</h2>
+<p>Prism Launcher、CurseForge、公式ランチャー、カスタムフォルダの自動検出；ドラッグ＆ドロップ（Drag &amp; Drop）とアイコンキャッシュを備えた高速 MOD ライブラリ；内蔵 <b>Modrinth カタログ</b> による MOD の検索・ダウンロード・一括アップデート；不足している依存関係の自動検出；ゲームクラッシュを瞬時に特定する <b>クラッシュレポート＆ログアナライザー</b>；MOD・設定（<code>config</code>）・リソースパック・シェーダー・ワールドセーブ（<code>saves</code>）を含む完全な MOD パックのエクスポート／インポート；安全なプロファイル適用とバックアップ管理。</p>
+<p class="note"><b>安全性について:</b> プロファイルの適用やバックアップ復元を行う前に、必ず Minecraft を終了してください。</p>
+
+<h2>MOD ライブラリとドラッグ＆ドロップ</h2>
+<p>JAR ファイルをライブラリの表へ直接ドラッグ＆ドロップするだけで即座にインポートされます。MOD のメタデータと内蔵アイコンが抽出・キャッシュされ、素早い検索やバージョン／ローダーによる絞り込みが可能です。</p>
+
+<h2>Modrinth カタログと自動アップデート</h2>
+<ul>
+  <li><b>Modrinth カタログ:</b> ブラウザを開かずに対応 MOD を検索・ダウンロードできます。</li>
+  <li><b>更新チェック:</b> ファイルのハッシュ値を Modrinth API と照合し、最新バージョンへワンクリックで更新できます。</li>
+</ul>
+
+<h2>プロファイルと依存関係の解決</h2>
+<p>環境ごとに最適な MOD の組み合わせをプロファイルとして管理できます。必要な前提 MOD（Fabric API など）が不足している場合は自動で警告が表示され、Modrinth から素早く入手できます。</p>
+
+<h2>MOD パックのエクスポートとインポート</h2>
+<p>プロファイルを <code>.morgpack</code> または <code>.zip</code> 形式でエクスポートできます。MOD 本体だけでなく、<code>config</code> フォルダ、リソースパック、シェーダー、ワールドデータ（<code>saves</code>）をまとめてパッケージ化し、別の環境へ簡単にインポートして即プレイできます。</p>
+
+<h2>クラッシュログアナライザー</h2>
+<p>ゲームが起動しない場合やクラッシュした際、<code>crash-reports</code> や <code>latest.log</code> を自動解析し、原因となった MOD や Java の互換性問題、メモリ不足（OutOfMemory）を特定して解決策を提案します。</p>
+
+<h2>セーブデータ、リソースパック、シェーダー</h2>
+<p>ワールドデータやグラフィックパックもドラッグ＆ドロップに対応。ディスクキャッシュによる超高速起動で、数千個の MOD でも快適に動作します。</p>
 </body>
 </html>

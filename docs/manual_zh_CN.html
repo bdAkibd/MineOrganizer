@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <style>
-body { font-family: sans-serif; line-height: 1.45; margin: 14px; }
-h1 { margin-top: 0; } h2 { margin-top: 24px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); }
+body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+li { margin: 5px 0; }
+code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
 </style>
 </head>
 <body>
-<h1>MineOrganizer 用户手册</h1><p>MineOrganizer 是一款桌面工具，用于集中管理 Minecraft 游戏环境、模组、存档、资源包、光影、配置档案、配置文件和备份，帮助你安全切换整套内容。</p>
-<h2>程序用途</h2><p>可用于管理 Prism Launcher、CurseForge、官方启动器、TLauncher 和旧版安装环境；维护可搜索的模组 JAR 库；通过 saves 文件夹安装世界；应用配置档案；检查环境并撤销托管更改；备份和恢复配置文件。</p>
-<p class="note"><b>安全提示:</b> 预览和环境检查均为只读操作。应用配置档案、安装资源、恢复备份或修改正在使用的环境文件前，请先关闭 Minecraft。</p>
-<h2>首次启动</h2><p>打开 Settings → Language selection 选择界面语言。新安装默认使用英语。可在 View 中选择浅色或深色主题。打开 Game environments 并点击 Refresh。若未检测到安装环境，请使用 Add game folder、Choose Prism folder，或为官方启动器创建实例。</p>
-<h2>游戏环境</h2><p>表格显示来源、环境名称、Minecraft 版本、加载器、加载器版本和状态。Prism 使用已配置的 Prism 目录。CurseForge 使用 %USERPROFILE%\curseforge\minecraft\Instances。旧版安装可能从文件夹名称或 JSON 元数据读取版本和加载器信息。外部安装或删除实例后请刷新列表。</p>
-<h2>模组库</h2><p>点击 Import JAR 并选择一个或多个模组文件，原文件会复制到模组库。可按 Minecraft 版本、加载器或兼容性筛选。右键菜单可查看详情、从库中移除，或在支持时分配给配置档案。在程序外更改库文件后，点击 Refresh library。</p>
-<h2>版本检测</h2><p>程序优先读取模组元数据。元数据不完整时，也会检查文件名，例如 mc1.20.1、1.20.1-forge、dynamiclights-1.20.1.2 和 +1.20.1。支持多个 Minecraft 版本的模组会作为一个条目显示，并包含多个兼容版本，不会因选择配置档案版本而重复出现。</p>
-<h2>手动指定 Minecraft 版本</h2><p>选择模组并使用 Edit Minecraft version…。可输入单个版本（如 1.20.1），也可输入逗号分隔的多个版本（如 1.20.1, 1.21）。也接受 [1.20,1.21) 这样的版本范围。清空字段可取消手动指定。设置会针对该文件保存，不会修改 JAR 文件本身。</p>
-<h2>存档</h2><p>Saves 标签页管理所选环境的 Minecraft 世界。选择环境或配置档案，将世界压缩包或文件夹导入存档库并安装。MineOrganizer 会将其放入 saves 目录。替换同名存档前，请备份重要世界。</p>
-<h2>配置档案</h2><p>配置档案是针对某个游戏环境命名保存的一组模组和相关资源。通过 Instance for new profile 选择目标环境，点击 Create profile 并输入名称。使用 Edit mods 选择兼容模组。通过 Rename 或 Delete profile 管理列表。</p>
-<h2>应用配置档案</h2><p>在虚拟化区域选择配置档案，点击 Preview 并检查每项操作。确认预览无误后再点击 Apply profile。Rollback last application 可撤销最近一次托管更改。若目标文件夹中有手动修改，使用 Check conflicts。程序不会覆盖无关的普通文件。</p>
-<h2>环境检查</h2><p>此标签页报告检测到的 Minecraft 文件、加载器信息、外部模组和兼容性详情。检查不会修改环境，可用于诊断模组不可用等问题。</p>
-<h2>资源包与光影</h2><p>选择 Resource packs 或 Shaders，使用 Import ZIP 将压缩包复制到独立资源库。使用 Choose for profile 将资源加入配置档案。Preview、Apply assets 和 Rollback assets 的用法与配置档案虚拟化相同。资源会链接到 resourcepacks 或 shaderpacks 文件夹，不会覆盖已有普通文件。</p>
-<h2>配置与备份</h2><p>Backup 会将所选环境的 config 文件夹打包并添加时间戳。如果不存在该文件夹，程序会提示且不会创建误导性备份。选择已有备份并使用 Restore 可恢复配置；请先关闭 Minecraft。在程序外添加或删除压缩包后刷新列表。</p>
-<h2>推荐流程</h2><p>刷新并确认目标环境；将模组、存档、资源包和光影导入各自的库；创建配置档案；选择兼容内容并预览更改；重大修改前备份配置；关闭 Minecraft 后应用配置档案并测试游戏。如有问题，关闭游戏并使用 Rollback 或 Restore。</p>
-<h2>故障排除与限制</h2><p>环境缺失时刷新列表或手动添加游戏目录。模组没有版本时检查元数据和文件名。模组被筛选隐藏时检查 Minecraft 版本和加载器。应用失败时关闭 Minecraft，检查预览、冲突和目标文件夹写入权限。MineOrganizer 不安装 Minecraft 加载器、不从在线服务下载模组，也不保证第三方模组兼容。请单独备份重要世界和配置。</p>
+<h1>MineOrganizer 用户手册</h1>
+<p>MineOrganizer 是一款集中管理 Minecraft 游戏环境、模组 (Mod)、存档 (Saves)、资源包、光影、配置文件与备份的桌面管理工具。</p>
+
+<h2>核心功能</h2>
+<p>支持管理 Prism Launcher、CurseForge、官方启动器及自定义游戏目录；具备拖放导入 (Drag &amp; Drop) 与图标缓存的高性能 Mod 库；内置 <b>Modrinth 模组库</b>，支持直接搜索、下载与一键检查更新；自动检测配置方案中的依赖缺失；内置<b>崩溃与日志分析器</b>快速排查游戏闪退；支持导出与导入完整整合包（包含 Mod、<code>config</code> 配置、光影、材质包与世界存档）；安全链接虚拟化与配置备份。</p>
+<p class="note"><b>安全提示：</b> 在应用配置方案、安装资源或恢复备份前，请务必先关闭 Minecraft 游戏客户端。</p>
+
+<h2>模组库与拖放导入</h2>
+<p>只需将 Mod 的 JAR 文件从文件管理器拖放到模组库表格中即可快速导入。系统会自动提取元数据并缓存内置图标，支持按 Minecraft 版本与加载器即时筛选。</p>
+
+<h2>Modrinth 模组库与自动更新</h2>
+<ul>
+  <li><b>Modrinth 模组库：</b> 无需打开浏览器，直接在软件内搜索并下载兼容版本的 Mod。</li>
+  <li><b>检查更新：</b> 自动比对文件哈希值，一键批量下载更新最新版本。</li>
+</ul>
+
+<h2>配置方案与依赖解析</h2>
+<p>为不同的游戏实例创建专属方案。若选中的 Mod 缺少必要的前置依赖（如 Fabric API），软件将在兼容性一栏提示并可一键跳转下载。</p>
+
+<h2>整合包导出与导入</h2>
+<p>可将配置方案打包导出为 <code>.morgpack</code> 或 <code>.zip</code> 整合包，打包内容可自由勾选 Mod、配置文件目录 (<code>config</code>)、光影包、资源包及世界存档 (<code>saves</code>)。导入整合包时将自动解压并还原为即玩环境。</p>
+
+<h2>崩溃报告与日志分析</h2>
+<p>游戏发生崩溃时，通过分析器读取 <code>crash-reports</code> 或 <code>latest.log</code>，自动识别引发崩溃的 Mod、依赖冲突、Java 版本问题或内存不足 (OutOfMemory)，并提供清晰的修复指引与一键复制功能。</p>
+
+<h2>存档、光影与性能缓存</h2>
+<p>存档、光影与材质包均支持拖放导入。通过本地磁盘持久化哈希缓存，即使管理数千个 Mod 也能实现瞬间极速加载。</p>
 </body>
 </html>

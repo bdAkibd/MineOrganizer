@@ -1,47 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="ASCII">
+  <meta charset="UTF-8">
   <style>
-    body { font-family: sans-serif; line-height: 1.45; margin: 14px; }
-    h1 { margin-top: 0; }
-    h2 { margin-top: 24px; }
-    h3 { margin-top: 18px; }
-    li { margin: 5px 0; }
-    code { font-family: Consolas, monospace; }
-    .note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); }
+    body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+    h1 { margin-top: 0; color: #204a87; }
+    h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { margin-top: 18px; color: #3465a4; }
+    li { margin: 6px 0; }
+    code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+    .note { padding: 10px 14px; border-left: 4px solid #4f8cff; background: rgba(79,140,255,0.08); margin: 12px 0; }
   </style>
 </head>
 <body>
   <h1>MineOrganizer User Manual</h1>
-  <p><b>MineOrganizer</b> is a desktop manager for Minecraft game environments, mods, saves, resource packs, shaders, profiles, configuration files, and backups. It brings files from different launchers into one workspace and helps you switch complete sets of content safely.</p>
+  <p><b>MineOrganizer</b> is a desktop manager for Minecraft game environments, mods, saves, resource packs, shaders, profiles, configuration files, and backups. It brings files from different launchers into one workspace and helps you manage and switch complete sets of game content safely.</p>
+
   <h2>What the program is for</h2>
   <p>Use MineOrganizer when you have several Minecraft installations or mod collections and want to:</p>
-  <ul><li>see environments from Prism Launcher, CurseForge, the official launcher, TLauncher, and legacy installations;</li><li>keep one searchable library of mod JAR files and select compatible mods for a profile;</li><li>store and install worlds through the <code>saves</code> folder without opening the game directory manually;</li><li>apply profiles containing mods, resource packs, and shaders;</li><li>check an environment before changing it and roll back managed links when needed;</li><li>create backups of configuration files and restore them later.</li></ul>
-  <p class="note"><b>Safety:</b> preview and environment checks are read-only. Close Minecraft before applying a profile, installing assets, restoring backups, or changing files in an active environment.</p>
+  <ul>
+    <li>Detect environments from Prism Launcher, CurseForge, the official Minecraft launcher, TLauncher, and custom game directories;</li>
+    <li>Keep a centralized, high-performance mod library with Drag &amp; Drop import and cached mod icons;</li>
+    <li>Search, download, and update mods directly through the built-in <b>Modrinth Catalog</b>;</li>
+    <li>Automatically detect missing mod dependencies in profiles;</li>
+    <li>Quickly diagnose game crashes using the integrated <b>Crash Report &amp; Log Analyzer</b>;</li>
+    <li>Export and import complete modpacks (including mods, configs, resource packs, shaders, and saves) via <code>.morgpack</code> / <code>.zip</code>;</li>
+    <li>Store, organize, and install worlds through the <code>saves</code> tab without digging into game directories manually;</li>
+    <li>Apply profiles containing mods, resource packs, and shaders using virtualized links;</li>
+    <li>Create timestamped backups of configuration files and restore them in one click.</li>
+  </ul>
+  <p class="note"><b>Safety:</b> Preview and environment checks are read-only. Close Minecraft before applying a profile, installing assets, restoring backups, or modifying files in an active environment.</p>
+
   <h2>First launch</h2>
-  <ol><li>Open <b>Settings → Language selection</b> and choose the interface language. English is the default for a new installation; the choice is saved automatically.</li><li>Choose a light or dark theme from <b>View</b>. The theme is also saved automatically.</li><li>Open <b>Game environments</b> and press <b>Refresh</b>. MineOrganizer searches known launcher locations.</li><li>If an installation was not detected, use <b>Add game folder</b>, <b>Choose Prism folder</b>, or create an instance for the official launcher.</li></ol>
-  <h2>Game environments</h2>
-  <p>This table lists the folders that MineOrganizer can manage. It shows the source, environment name, Minecraft version, loader, loader version, and current status.</p>
-  <ul><li><b>Prism Launcher:</b> instances are read from the configured Prism directory.</li><li><b>CurseForge:</b> instances are read from <code>%USERPROFILE%\curseforge\minecraft\Instances</code>.</li><li><b>Legacy and other installations:</b> version and loader information may be read from the folder name or JSON metadata.</li></ul>
-  <p>Use the context menu on a row to open its folder or perform an available environment action. Refresh after installing or removing an instance outside the program.</p>
-  <h2>Mod library</h2>
-  <ol><li>Press <b>Import JAR</b> and select one or more mod files. The original files are copied into the library.</li><li>Use the filters to narrow the list by Minecraft version, loader, or compatibility.</li><li>Open the context menu for an item to inspect it, remove it from the library, or assign it to a profile where supported.</li><li>Press <b>Refresh library</b> after changing library files outside MineOrganizer.</li></ol>
-  <p>Version detection first uses mod metadata. If metadata is incomplete, the program also examines the file name, including patterns such as <code>mc1.20.1</code>, <code>1.20.1-forge</code>, <code>dynamiclights-1.20.1.2</code>, and <code>+1.20.1</code>. A mod can list several Minecraft versions; these are treated as one mod entry with multiple compatible versions, so choosing one profile version does not create duplicate versions.</p>
-  <h3>Manual Minecraft-version override</h3>
-  <p>Automatic detection is only a best effort. If the Minecraft version shown for a mod is incorrect, select the mod in the library and use <b>Edit Minecraft version…</b> from the toolbar or the context menu.</p>
-  <ul><li>Enter one version, for example <code>1.20.1</code>.</li><li>Enter several versions separated by commas, for example <code>1.20.1, 1.21</code>.</li><li>Version ranges such as <code>[1.20,1.21)</code> are also accepted.</li><li>Leave the field empty to clear the override and return to automatic detection.</li></ul>
-  <p>The override is saved for that exact file and remains after restarting the program. It is used by the library table, version filters, profile mod selection, and compatibility checks. It does not modify the JAR file itself.</p>
+  <ol>
+    <li>Open <b>Settings → Language</b> and choose your preferred interface language. English and Russian are fully supported, along with 9 other languages.</li>
+    <li>Choose a light or dark theme from <b>View</b>. Settings are saved automatically.</li>
+    <li>Open <b>Game environments</b> and press <b>Refresh</b>. MineOrganizer scans known launcher locations.</li>
+    <li>If an installation was not detected, use <b>Add game folder…</b>, <b>Choose Prism folder…</b>, or create an instance for the official launcher.</li>
+  </ol>
+
+  <h2>Mod library &amp; Drag and Drop</h2>
+  <ol>
+    <li><b>Drag &amp; Drop import:</b> drag one or more mod JAR files from your file manager directly onto the mod library table. They are immediately copied to the library, parsed, and assigned cached icons.</li>
+    <li><b>Standard import:</b> press <b>Import JAR…</b> on the toolbar and select files.</li>
+    <li>Use live search and filters (Minecraft version, loader, compatibility) to navigate large collections.</li>
+    <li>Right-click any item to view detailed info, edit tags, override Minecraft versions, open file locations, or remove items.</li>
+  </ol>
+
+  <h2>Modrinth Catalog &amp; Auto-Updates</h2>
+  <h3>Browsing and installing from Modrinth</h3>
+  <ol>
+    <li>In the <b>Mod library</b>, click <b>Modrinth catalog</b>.</li>
+    <li>Search by keyword and filter by Minecraft version and mod loader (Fabric, Forge, NeoForge, Quilt).</li>
+    <li>View mod descriptions, authors, downloads, and compatibility. Click the download icon to download the compatible JAR directly into your library.</li>
+  </ol>
+  <h3>Checking for updates</h3>
+  <ol>
+    <li>Click <b>Check updates</b> in the library or from a profile's context menu.</li>
+    <li>MineOrganizer verifies file hashes (SHA-1 / SHA-512) against Modrinth's API.</li>
+    <li>In the <b>Updates</b> window, review available updates, select desired mods, and click <b>Update selected</b> to download the latest releases automatically.</li>
+  </ol>
+
+  <h2>Profiles &amp; Dependency Resolution</h2>
+  <p>A profile is a named set of mods and assets configured for a specific Minecraft installation.</p>
+  <ol>
+    <li>Open <b>Profiles</b>, select a target environment, and click <b>Create profile…</b>.</li>
+    <li>Select the profile and click <b>Edit mods…</b>.</li>
+    <li>Mark the mods to include in the profile.</li>
+    <li><b>Automatic dependency resolution:</b> if a chosen mod requires another library or mod (such as Fabric API), MineOrganizer flags the missing dependency in the compatibility column and offers to open the Modrinth catalog to fetch it immediately.</li>
+  </ol>
+
+  <h2>Modpack Export &amp; Import</h2>
+  <h3>Exporting a modpack</h3>
+  <ol>
+    <li>Select a profile and choose <b>Export modpack…</b> from the <b>File</b> menu or toolbar.</li>
+    <li>In the export dialog, choose which components to package:
+      <ul>
+        <li><b>Mods (JAR files):</b> selected profile mods.</li>
+        <li><b>Configurations (config folder):</b> mod configurations from the environment.</li>
+        <li><b>Resource packs:</b> texture packs from <code>resourcepacks</code>.</li>
+        <li><b>Shader packs:</b> shaders from <code>shaderpacks</code>.</li>
+        <li><b>Saves:</b> world saves from <code>saves</code>.</li>
+      </ul>
+    </li>
+    <li>Save the archive as <code>.morgpack</code> or <code>.zip</code>.</li>
+  </ol>
+  <h3>Importing a modpack</h3>
+  <ol>
+    <li>Choose <b>Import modpack…</b> from the <b>File</b> menu.</li>
+    <li>Select the <code>.morgpack</code>, <code>.zip</code>, or <code>.mrpack</code> file.</li>
+    <li>Specify a profile name and target environment. All mods, configs, assets, and saves will be extracted and prepared automatically!</li>
+  </ol>
+
+  <h2>Applying a profile</h2>
+  <ol>
+    <li>Select the profile in the virtualization panel.</li>
+    <li>Press <b>Preview</b> and review every proposed filesystem link.</li>
+    <li>Ensure Minecraft and its launcher are closed.</li>
+    <li>Press <b>Apply profile</b>. MineOrganizer creates managed symbolic/hard links from the library into the game directory. Regular files are never overwritten.</li>
+    <li>Use <b>Rollback last application</b> to revert changes whenever needed.</li>
+  </ol>
+
+  <h2>Crash Report &amp; Log Analyzer</h2>
+  <p>When Minecraft fails to start or crashes during gameplay, use the built-in log analyzer to identify the cause instantly:</p>
+  <ol>
+    <li>Select the game environment and click <b>Analyze crash &amp; logs…</b>.</li>
+    <li>Select the latest crash report (<code>crash-reports/crash-*.txt</code>) or game log (<code>logs/latest.log</code>).</li>
+    <li>The analyzer automatically identifies:
+      <ul>
+        <li>Minecraft version and mod loader;</li>
+        <li>Suspect mods extracted from the crash stack trace;</li>
+        <li>Diagnosis of the root issue (missing dependencies, Java version incompatibilities, or OutOfMemory errors);</li>
+        <li>Actionable suggested solutions.</li>
+      </ul>
+    </li>
+    <li>Use <b>Copy summary</b> or <b>Copy full log</b> to easily share diagnostics on forums or Discord.</li>
+  </ol>
+
   <h2>Saves</h2>
-  <p>The Saves tab manages Minecraft worlds for the selected environment.</p><ol><li>Select an environment or profile.</li><li>Import a world archive or world folder into the save library.</li><li>Choose the world and install it. MineOrganizer places it in the environment's <code>saves</code> directory.</li><li>Use the context menu to open, remove, or refresh library entries.</li></ol><p>Back up important worlds before replacing an existing save with the same name.</p>
-  <h2>Profiles</h2>
-  <p>A profile is a named selection of mods and related assets for one game environment.</p><ol><li>Choose the target environment in <b>Instance for new profile</b>.</li><li>Press <b>Create profile</b> and enter a name.</li><li>Select a profile in the table and press <b>Edit mods</b> to choose compatible mods. A mod supporting several versions can still be selected once for the chosen Minecraft version.</li><li>Use <b>Rename</b> or <b>Delete profile</b> to maintain the list.</li></ol>
-  <h3>Applying a profile</h3><ol><li>Select the profile in the virtualization section.</li><li>Press <b>Preview</b> and review every proposed action.</li><li>Press <b>Apply profile</b> only after the preview is correct.</li><li>Use <b>Rollback last application</b> to undo the most recent managed change.</li><li>Use <b>Check conflicts</b> if files in the target folder were changed manually.</li></ol><p>MineOrganizer manages links for selected files so one library can serve several profiles. It does not overwrite unrelated regular files.</p>
-  <h2>Environment check</h2><p>This tab inspects a selected environment and reports detected Minecraft files, loader information, external mods, and compatibility details. It is useful before creating a profile or diagnosing why a mod is not available. The check does not modify the environment.</p>
-  <h2>Resource packs and shaders</h2><ol><li>Select <b>Resource packs</b> or <b>Shaders</b>.</li><li>Press <b>Import ZIP</b> to copy an archive to the separate asset library.</li><li>Select a profile and press <b>Choose for profile</b> if the asset should be included.</li><li>Use <b>Preview</b>, <b>Apply assets</b>, and <b>Rollback assets</b> in the same way as profile virtualization.</li></ol><p>Assets are linked into the environment's <code>resourcepacks</code> or <code>shaderpacks</code> folder. Existing regular files are not overwritten.</p>
-  <h2>Configs and backups</h2><p>The table shows available configuration files and backups instead of leaving the page empty.</p><ul><li>Use <b>Backup</b> to create a timestamped archive of the selected environment's <code>config</code> folder.</li><li>If the environment has no <code>config</code> folder, the program reports that fact and does not create a misleading archive.</li><li>Select an existing backup and use <b>Restore</b> to put the configuration back. Close Minecraft first.</li><li>Refresh the table after adding or deleting archives outside the program.</li></ul>
-  <h2>Recommended workflow</h2><ol><li>Refresh and verify the target environment.</li><li>Import mods, saves, resource packs, and shaders into their libraries.</li><li>Create a profile for the environment.</li><li>Select compatible content and preview the planned changes.</li><li>Create a configuration backup before a large change.</li><li>Close Minecraft, apply the profile, then start the game and test it.</li><li>If something is wrong, close the game and use rollback or restore.</li></ol>
-  <h2>Troubleshooting</h2><ul><li><b>An environment is missing:</b> refresh, select the correct launcher folder, or add the game directory manually.</li><li><b>A mod has no version:</b> verify that its version is present in metadata or its file name; refresh the library after renaming or replacing it.</li><li><b>A mod is filtered out:</b> check the selected environment's Minecraft version and loader.</li><li><b>Applying fails:</b> close Minecraft, inspect the preview, check conflicts, and verify that the target folder is writable.</li><li><b>A backup is unavailable:</b> refresh the Configs and backups tab and check that the archive belongs to the selected environment.</li></ul>
-  <h2>Important limitations</h2><p>MineOrganizer manages files that it can identify and link. It does not install Minecraft loaders, download mods from online services, or guarantee that a third-party mod is compatible. Always keep independent backups of irreplaceable worlds and configurations.</p>
+  <p>The <b>Saves</b> tab manages Minecraft worlds for the selected environment. Drag and drop world ZIP archives or folders directly onto the Saves tab. Select a save and click <b>Install selected save</b> to copy it into the active environment's <code>saves</code> folder.</p>
+
+  <h2>Resource packs and shaders</h2>
+  <p>Drag and drop ZIP archives directly onto the Resource packs or Shaders tables. Select archives, assign them to a profile, and apply them using safe link virtualization.</p>
+
+  <h2>Configs and Backups</h2>
+  <ul>
+    <li>Click <b>Create backup</b> to make a timestamped ZIP archive of the selected environment's <code>config</code> folder.</li>
+    <li>Select a backup and click <b>Restore archive…</b> to restore settings safely. Current configs are automatically backed up before any restoration.</li>
+  </ul>
+
+  <h2>Performance &amp; Caching</h2>
+  <p>MineOrganizer includes a disk-persistent hash and metadata cache. File hashes and mod properties are cached after initial inspection, allowing subsequent launches and library scans with thousands of mods to complete in milliseconds without re-reading JAR archives from disk.</p>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><b>Environment missing:</b> click Refresh or use <em>Add game folder…</em> to select the directory manually.</li>
+    <li><b>Applying fails:</b> close Minecraft and the launcher, inspect Preview, and verify file permissions.</li>
+    <li><b>Game crashes:</b> open <em>Analyze crash &amp; logs…</em> to see the offending mod and suggested fix.</li>
+  </ul>
 </body>
 </html>

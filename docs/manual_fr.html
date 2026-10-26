@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <style>
-body { font-family: sans-serif; line-height: 1.45; margin: 14px; }
-h1 { margin-top: 0; } h2 { margin-top: 24px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); }
+body { font-family: sans-serif; line-height: 1.45; margin: 16px; max-width: 960px; }
+h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+li { margin: 5px 0; }
+code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
 </style>
 </head>
 <body>
-<h1>Manuel utilisateur de MineOrganizer</h1><p>MineOrganizer gère les environnements Minecraft, les mods, les mondes sauvegardés, les packs de ressources, les shaders, les profils, les fichiers de configuration et les sauvegardes dans un espace de travail commun.</p>
-<h2>À quoi sert le programme</h2><p>Il permet de gérer les installations de Prism Launcher, CurseForge, du lanceur officiel, de TLauncher et les anciennes installations ; de conserver une bibliothèque de fichiers JAR de mods ; d’installer des mondes via saves ; d’appliquer des profils ; de vérifier les environnements et d’annuler des changements ; et de sauvegarder ou restaurer les configurations.</p>
-<p class="note"><b>Sécurité:</b> L’aperçu et les vérifications ne font que lire les données. Fermez Minecraft avant d’appliquer un profil, d’installer des ressources, de restaurer une sauvegarde ou de modifier des fichiers dans un environnement actif.</p>
-<h2>Premier lancement</h2><p>Ouvrez Settings → Language selection et choisissez la langue. L’anglais est utilisé par défaut lors d’une nouvelle installation. Choisissez un thème clair ou sombre dans View. Ouvrez Game environments et cliquez sur Refresh. Si une installation manque, utilisez Add game folder, Choose Prism folder ou créez une instance pour le lanceur officiel.</p>
-<h2>Environnements de jeu</h2><p>Le tableau indique la source, le nom de l’environnement, la version de Minecraft, le chargeur, sa version et l’état. Prism utilise son répertoire configuré. CurseForge utilise %USERPROFILE%\curseforge\minecraft\Instances. Pour les anciennes installations, la version et le chargeur peuvent être déduits du nom du dossier ou des métadonnées JSON. Actualisez après des modifications externes.</p>
-<h2>Bibliothèque de mods</h2><p>Cliquez sur Import JAR et sélectionnez des fichiers ; les originaux sont copiés dans la bibliothèque. Filtrez par version de Minecraft, chargeur ou compatibilité. Le menu contextuel permet d’examiner, de retirer ou d’affecter un mod à un profil lorsque c’est pris en charge. Cliquez sur Refresh library après des modifications externes.</p>
-<h2>Détection des versions</h2><p>La détection utilise d’abord les métadonnées du mod. Si elles sont incomplètes, le nom du fichier est également examiné, par exemple mc1.20.1, 1.20.1-forge, dynamiclights-1.20.1.2 ou +1.20.1. Un mod prenant en charge plusieurs versions apparaît comme une seule entrée avec plusieurs versions compatibles.</p>
-<h2>Remplacement manuel de la version Minecraft</h2><p>Sélectionnez le mod et utilisez Edit Minecraft version…. Saisissez une version comme 1.20.1 ou plusieurs versions séparées par des virgules, comme 1.20.1, 1.21. Les plages comme [1.20,1.21) sont acceptées. Laissez le champ vide pour supprimer la valeur manuelle. Elle est enregistrée pour ce fichier sans modifier le JAR.</p>
-<h2>Mondes sauvegardés</h2><p>L’onglet Saves gère les mondes de l’environnement sélectionné. Choisissez un environnement ou un profil, importez une archive ou un dossier de monde et installez-le. MineOrganizer le place dans saves. Sauvegardez les mondes importants avant de remplacer une sauvegarde portant le même nom.</p>
-<h2>Profils</h2><p>Un profil est une sélection nommée de mods et de ressources pour un environnement. Choisissez Instance for new profile, cliquez sur Create profile et saisissez un nom. Utilisez Edit mods pour sélectionner les mods compatibles. Rename et Delete profile permettent de gérer la liste.</p>
-<h2>Appliquer un profil</h2><p>Sélectionnez le profil dans la section de virtualisation, cliquez sur Preview et examinez les actions proposées. Utilisez Apply profile seulement après vérification. Rollback last application annule la dernière modification gérée. Check conflicts aide lorsque des fichiers ont été modifiés manuellement. Les fichiers ordinaires sans rapport ne sont pas écrasés.</p>
-<h2>Vérification de l’environnement</h2><p>Cet onglet signale les fichiers Minecraft détectés, les informations du chargeur, les mods externes et la compatibilité. Il ne modifie pas l’environnement et aide au diagnostic.</p>
-<h2>Packs de ressources et shaders</h2><p>Sélectionnez Resource packs ou Shaders et importez des archives avec Import ZIP. Utilisez Choose for profile pour inclure une ressource dans un profil. Preview, Apply assets et Rollback assets fonctionnent comme la virtualisation des profils. Les liens sont placés dans resourcepacks ou shaderpacks sans écraser les fichiers ordinaires existants.</p>
-<h2>Configurations et sauvegardes</h2><p>Backup crée une archive horodatée du dossier config de l’environnement. Si le dossier n’existe pas, le programme le signale. Pour restaurer, sélectionnez une sauvegarde et utilisez Restore ; fermez d’abord Minecraft. Actualisez le tableau après les changements externes.</p>
-<h2>Procédure recommandée</h2><p>Actualisez et vérifiez l’environnement cible, importez les mods et ressources, créez un profil, choisissez le contenu compatible et vérifiez l’aperçu. Sauvegardez la configuration avant une modification importante. Fermez Minecraft, appliquez le profil et testez le jeu. En cas de problème, utilisez Rollback ou Restore.</p>
-<h2>Dépannage et limites</h2><p>Si un environnement manque, actualisez ou ajoutez son dossier manuellement. Si un mod n’a pas de version, vérifiez les métadonnées et le nom du fichier. Si un mod est filtré, vérifiez la version Minecraft et le chargeur. En cas d’échec, fermez Minecraft et vérifiez l’aperçu, les conflits et les droits d’écriture. MineOrganizer n’installe pas les chargeurs, ne télécharge pas de mods en ligne et ne garantit pas la compatibilité des mods tiers. Conservez des sauvegardes indépendantes des mondes et configurations importants.</p>
+<h1>Manuel d'utilisation de MineOrganizer</h1>
+<p>MineOrganizer gère les environnements de jeu Minecraft, mods, sauvegardes, packs de ressources, shaders, profils, fichiers de configuration et sauvegardes dans un espace unique.</p>
+
+<h2>Fonctionnalités principales</h2>
+<p>Gestion des instances Prism Launcher, CurseForge, lanceur officiel et dossiers personnalisés ; bibliothèque centralisée avec glisser-déposer (Drag &amp; Drop) et icônes en cache ; catalogue Modrinth intégré pour rechercher, télécharger et mettre à jour les mods ; détection des dépendances requises ; analyseur de crashs et de journaux de jeu ; exportation et importation de modpacks complets (mods, configurations, shaders, ressources et mondes) ; et gestion sécurisée des sauvegardes.</p>
+<p class="note"><b>Sécurité :</b> Fermez Minecraft avant d'appliquer un profil, d'installer des ressources ou de restaurer des sauvegardes.</p>
+
+<h2>Bibliothèque de mods &amp; Glisser-déposer</h2>
+<p>Glissez-déposez des fichiers JAR directement dans le tableau de la bibliothèque. Les métadonnées et icônes sont extraites et mises en cache pour une réactivité maximale. Filtrez rapidement par version de jeu et chargeur de mods.</p>
+
+<h2>Catalogue Modrinth &amp; Mises à jour</h2>
+<ul>
+  <li><b>Catalogue Modrinth :</b> Trouvez et téléchargez des mods compatibles sans quitter le gestionnaire.</li>
+  <li><b>Vérification des mises à jour :</b> Vérifiez les sommes de contrôle avec Modrinth et mettez à jour vos mods en un clic.</li>
+</ul>
+
+<h2>Profils &amp; Dépendances</h2>
+<p>Associez des ensembles de mods à vos environnements. Le programme détecte les bibliothèques manquantes (ex. Fabric API) et vous aide à les installer instantanément.</p>
+
+<h2>Exportation &amp; Importation de Modpacks</h2>
+<p>Exportez vos profils au format <code>.morgpack</code> ou <code>.zip</code> avec les mods, dossiers de configuration (<code>config</code>), shaders, packs de textures et sauvegardes (<code>saves</code>). L'importation configure l'instance prête à être lancée.</p>
+
+<h2>Analyseur de crashs et de journaux</h2>
+<p>En cas d'erreur de lancement, analysez <code>crash-reports</code> ou <code>latest.log</code> pour identifier les mods responsables, les conflits de versions Java ou le manque de mémoire vive.</p>
+
+<h2>Sauvegardes et Performances</h2>
+<p>Glisser-déposer pour les mondes et les packs graphiques. Mise en cache persistante sur disque garantissant un démarrage instantané, même avec plusieurs milliers de fichiers.</p>
 </body>
 </html>
