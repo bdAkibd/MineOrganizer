@@ -1,42 +1,142 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<style>
-body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
-h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-li { margin: 5px 0; }
-code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
-</style>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+    h1 { margin-top: 0; color: #204a87; }
+    h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { margin-top: 18px; color: #3465a4; }
+    li { margin: 6px 0; }
+    code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+    .note { padding: 10px 14px; border-left: 4px solid #4f8cff; background: rgba(79,140,255,0.08); margin: 12px 0; }
+  </style>
 </head>
 <body>
-<h1>MineOrganizer ユーザーマニュアル</h1>
-<p>MineOrganizer は、Minecraft のゲーム環境、MOD、ワールドセーブ、リソースパック、シェーダー、プロファイル、設定ファイル、バックアップを一元管理できるデスクトップアプリケーションです。</p>
+  <h1>MineOrganizer ユーザーマニュアル</h1>
+  <p><b>MineOrganizer</b> は、Minecraft のゲーム環境、MOD、ワールドセーブ、リソースパック、シェーダー、プロファイル、設定ファイル、バックアップを一元管理できるデスクトップアプリケーションです。異なるランチャーのファイルを1つの作業スペースにまとめ、コンテンツを安全に切り替えて管理できます。</p>
 
-<h2>主な機能</h2>
-<p>Prism Launcher、CurseForge、公式ランチャー、カスタムフォルダの自動検出；ドラッグ＆ドロップ（Drag &amp; Drop）とアイコンキャッシュを備えた高速 MOD ライブラリ；内蔵 <b>Modrinth カタログ</b> による MOD の検索・ダウンロード・一括アップデート；不足している依存関係の自動検出；ゲームクラッシュを瞬時に特定する <b>クラッシュレポート＆ログアナライザー</b>；MOD・設定（<code>config</code>）・リソースパック・シェーダー・ワールドセーブ（<code>saves</code>）を含む完全な MOD パックのエクスポート／インポート；安全なプロファイル適用とバックアップ管理。</p>
-<p class="note"><b>安全性について:</b> プロファイルの適用やバックアップ復元を行う前に、必ず Minecraft を終了してください。</p>
+  <h2>主な機能</h2>
+  <p>複数の Minecraft インストールや MOD コレクションをお持ちで、以下を行いたい場合に最適です：</p>
+  <ul>
+    <li>Prism Launcher、CurseForge、公式ランチャー、TLauncher、カスタムフォルダを自動検出；</li>
+    <li>ドラッグ＆ドロップ（Drag &amp; Drop）とアイコンキャッシュを備えた高速な MOD ライブラリを管理；</li>
+    <li>内蔵 <b>Modrinth カタログ</b> により MOD を直接検索、ダウンロード、アップデート；</li>
+    <li>プロファイル内の不足している前提 MOD（依存関係）を自動検出；</li>
+    <li>内蔵 <b>クラッシュレポート＆ログアナライザー</b> で起動障害やゲームクラッシュを瞬時に診断；</li>
+    <li>MOD・設定（<code>config</code>）・リソースパック・シェーダー・ワールドセーブ（<code>saves</code>）を含む完全な MOD パックを <code>.morgpack</code> / <code>.zip</code> 形式でエクスポートおよびインポート；</li>
+    <li>フォルダを手動で開くことなく、<code>saves</code> タブでワールドデータを整理・インストール；</li>
+    <li>安全な仮想リンクを用いて MOD、テクスチャ、シェーダーを含むプロファイルを適用；</li>
+    <li>設定ファイルのタイムスタンプ付きバックアップを作成し、ワンクリックで安全に復元。</li>
+  </ul>
+  <p class="note"><b>安全性について:</b> プレビューと環境チェックは読み取り専用です。プロファイルの適用、リソースの導入、バックアップ復元を行う前に、必ず Minecraft を終了してください。</p>
 
-<h2>MOD ライブラリとドラッグ＆ドロップ</h2>
-<p>JAR ファイルをライブラリの表へ直接ドラッグ＆ドロップするだけで即座にインポートされます。MOD のメタデータと内蔵アイコンが抽出・キャッシュされ、素早い検索やバージョン／ローダーによる絞り込みが可能です。</p>
+  <h2>最初の起動</h2>
+  <ol>
+    <li><b>設定 → 言語</b> を開き、お好みの表示言語を選択します。日本語と英語をはじめとする全11言語に対応しています。</li>
+    <li><b>表示</b> メニューからライトまたはダークテーマを選択します。設定は自動で保存されます。</li>
+    <li><b>ゲーム環境</b> タブを開き、<b>更新</b> を押してランチャーの既知の場所をスキャンします。</li>
+    <li>環境が自動検出されない場合は、<b>ゲームフォルダを追加…</b>、<b>Prism フォルダを選択…</b> または公式ランチャー用インスタンスを作成してください。</li>
+  </ol>
 
-<h2>Modrinth カタログと自動アップデート</h2>
-<ul>
-  <li><b>Modrinth カタログ:</b> ブラウザを開かずに対応 MOD を検索・ダウンロードできます。</li>
-  <li><b>更新チェック:</b> ファイルのハッシュ値を Modrinth API と照合し、最新バージョンへワンクリックで更新できます。</li>
-</ul>
+  <h2>MOD ライブラリとドラッグ＆ドロップ</h2>
+  <ol>
+    <li><b>高速インポート（Drag &amp; Drop）:</b> エクスプローラーから MOD の JAR ファイルをライブラリの表へ直接ドラッグ＆ドロップします。瞬時にコピー、解析され、キャッシュされたアイコンが表示されます。</li>
+    <li><b>標準インポート:</b> ツールバーの <b>JAR をインポート…</b> を押してファイルを選択します。</li>
+    <li>リアルタイム検索とフィルター（Minecraft バージョン、ローダー、互換性）を活用してコレクションを快適に閲覧できます。</li>
+    <li>任意の項目を右クリックして、詳細情報の確認、タグの編集、Minecraft バージョンの上書き、フォルダを開く、MOD の削除が可能です。</li>
+  </ol>
 
-<h2>プロファイルと依存関係の解決</h2>
-<p>環境ごとに最適な MOD の組み合わせをプロファイルとして管理できます。必要な前提 MOD（Fabric API など）が不足している場合は自動で警告が表示され、Modrinth から素早く入手できます。</p>
+  <h2>Modrinth カタログと自動アップデート</h2>
+  <h3>Modrinth からの検索と導入</h3>
+  <ol>
+    <li><b>MOD ライブラリ</b> で <b>Modrinth カタログ</b> をクリックします。</li>
+    <li>キーワードを入力し、Minecraft バージョンとローダー（Fabric、Forge、NeoForge、Quilt）で絞り込みます。</li>
+    <li>説明、作者、ダウンロード数、互換性を確認し、ダウンロードボタンを押してライブラリへ直接取り込みます。</li>
+  </ol>
+  <h3>更新チェック</h3>
+  <ol>
+    <li>ライブラリまたはプロファイルのコンテキストメニューで <b>更新を確認</b> をクリックします。</li>
+    <li>MineOrganizer がファイルのハッシュ値（SHA-1 / SHA-512）を Modrinth API と照合します。</li>
+    <li><b>アップデート</b> ウィンドウで対象 MOD を選択し、<b>選択項目を更新</b> をクリックして最新リリースを自動ダウンロードします。</li>
+  </ol>
 
-<h2>MOD パックのエクスポートとインポート</h2>
-<p>プロファイルを <code>.morgpack</code> または <code>.zip</code> 形式でエクスポートできます。MOD 本体だけでなく、<code>config</code> フォルダ、リソースパック、シェーダー、ワールドデータ（<code>saves</code>）をまとめてパッケージ化し、別の環境へ簡単にインポートして即プレイできます。</p>
+  <h2>プロファイルと依存関係の解決</h2>
+  <p>プロファイルとは、特定の Minecraft インストール用に構成された MOD とリソースの組み合わせです。</p>
+  <ol>
+    <li><b>プロファイル</b> タブを開き、対象環境を選択して <b>プロファイル作成…</b> を押します。</li>
+    <li>プロファイルを選択し、<b>MOD を編集…</b> をクリックします。</li>
+    <li>プロファイルに含める MOD にチェックを入れます。</li>
+    <li><b>依存関係の自動解決:</b> 選択した MOD に前提ライブラリ（Fabric API など）が必要な場合、互換性列に警告が表示され、Modrinth から素早く入手できます。</li>
+  </ol>
 
-<h2>クラッシュログアナライザー</h2>
-<p>ゲームが起動しない場合やクラッシュした際、<code>crash-reports</code> や <code>latest.log</code> を自動解析し、原因となった MOD や Java の互換性問題、メモリ不足（OutOfMemory）を特定して解決策を提案します。</p>
+  <h2>MOD パックのエクスポートとインポート</h2>
+  <h3>MOD パックのエクスポート</h3>
+  <ol>
+    <li>プロファイルを選択し、<b>ファイル</b> メニューまたはツールバーから <b>MOD パックをエクスポート…</b> を選択します。</li>
+    <li>ダイアログでパッケージに含めるコンポーネントを選択します：
+      <ul>
+        <li><b>MOD（JAR ファイル）:</b> プロファイルで選択された MOD。</li>
+        <li><b>設定（<code>config</code> フォルダ）:</b> 環境内の MOD 設定ファイル。</li>
+        <li><b>リソースパック:</b> <code>resourcepacks</code> フォルダ内のテクスチャ。</li>
+        <li><b>シェーダーパック:</b> <code>shaderpacks</code> フォルダ内のシェーダー。</li>
+        <li><b>ワールドセーブ:</b> <code>saves</code> フォルダ内のセーブデータ。</li>
+      </ul>
+    </li>
+    <li><code>.morgpack</code> または <code>.zip</code> 形式で保存します。</li>
+  </ol>
+  <h3>MOD パックのインポート</h3>
+  <ol>
+    <li><b>ファイル</b> メニューから <b>MOD パックをインポート…</b> を選択します。</li>
+    <li><code>.morgpack</code>、<code>.zip</code>、または <code>.mrpack</code> ファイルを選択します。</li>
+    <li>プロファイル名と対象環境を指定します。すべての MOD、設定、リソース、ワールドが自動展開され、プレイ準備が完了します！</li>
+  </ol>
 
-<h2>セーブデータ、リソースパック、シェーダー</h2>
-<p>ワールドデータやグラフィックパックもドラッグ＆ドロップに対応。ディスクキャッシュによる超高速起動で、数千個の MOD でも快適に動作します。</p>
+  <h2>プロファイルの適用</h2>
+  <ol>
+    <li>仮想化パネルでプロファイルを選択します。</li>
+    <li><b>プレビュー</b> を押して、計画されているリンク構造を確認します。</li>
+    <li>Minecraft とランチャーが終了していることを確認します。</li>
+    <li><b>プロファイルを適用</b> を押します。ゲームディレクトリ内に安全な仮想リンクが作成され、ユーザー独自の通常ファイルは決して上書きされません。</li>
+    <li>必要に応じて <b>最後の適用を取り消す</b> を使用して元に戻せます。</li>
+  </ol>
+
+  <h2>クラッシュレポート＆ログアナライザー</h2>
+  <p>Minecraft が起動しない場合やプレイ中に異常終了した場合は、内蔵アナライザーで原因を即座に特定できます：</p>
+  <ol>
+    <li>ゲーム環境を選択し、<b>クラッシュ＆ログ分析…</b> をクリックします。</li>
+    <li>最新のクラッシュレポート（<code>crash-reports/crash-*.txt</code>）またはログ（<code>logs/latest.log</code>）を選択します。</li>
+    <li>アナライザーが以下を自動識別します：
+      <ul>
+        <li>Minecraft バージョンと MOD ローダー；</li>
+        <li>エラースタックトレースから特定された原因 MOD；</li>
+        <li>根本的な問題の診断（依存関係の不足、Java バージョン不一致、メモリ不足 OutOfMemory）；</li>
+        <li>具体的な推奨対処法。</li>
+      </ul>
+    </li>
+    <li><b>概要をコピー</b> または <b>ログ全体をコピー</b> を使用して、サポート窓口や Discord で簡単に共有できます。</li>
+  </ol>
+
+  <h2>Saves</h2>
+  <p><b>Saves</b> タブは選択された環境の Minecraft ワールドを管理します。ZIP アーカイブまたはフォルダをタブへ直接ドラッグ＆ドロップしてください。ワールドを選択し、<b>選択したセーブデータを導入</b> をクリックしてアクティブな <code>saves</code> フォルダへコピーします。</p>
+
+  <h2>Resource packs and shaders</h2>
+  <p>リソースパックやシェーダーの表へ ZIP アーカイブを直接ドラッグ＆ドロップできます。プロファイルへ紐付け、保護されたリンクで適用します。</p>
+
+  <h2>Configs and Backups</h2>
+  <ul>
+    <li><b>バックアップ作成</b> をクリックして、<code>config</code> フォルダの日時付きアーカイブを作成します。</li>
+    <li>既存のバックアップを選択し、<b>アーカイブを復元…</b> をクリックして安全に設定を復元できます。</li>
+  </ul>
+
+  <h2>Performance &amp; Caching</h2>
+  <p>MineOrganizer はハッシュ値とメタデータの永続的なディスクキャッシュを搭載しています。初回読み込み以降は、数千個の MOD コレクションであっても JAR ファイルを再読み込みすることなくミリ秒単位で高速起動します。</p>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><b>環境が表示されない:</b> 「更新」を押すか、「ゲームフォルダを追加…」で手動指定してください。</li>
+    <li><b>適用に失敗する:</b> Minecraft とランチャーを終了し、プレビューとアクセス権限を確認してください。</li>
+    <li><b>ゲームがクラッシュする:</b> クラッシュ＆ログ分析を開いて原因となった MOD と修正アドバイスを確認してください。</li>
+  </ul>
 </body>
 </html>

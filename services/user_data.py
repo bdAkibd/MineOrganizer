@@ -7,6 +7,8 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+from models.profile import Profile
+
 
 def default_user_data_path() -> Path:
     """Return the MineOrganizer user data path."""
@@ -93,6 +95,17 @@ class UserDataStore:
     def profiles(self) -> list[dict[str, Any]]:
         """Return the profile list."""
         return self.data["profiles"]
+
+    def get_profile(self, profile_id: str) -> Profile | None:
+        """Find a profile by ID and return it as a Profile domain model instance."""
+        for p in self.data["profiles"]:
+            if isinstance(p, dict) and p.get("id") == profile_id:
+                return Profile.from_dict(p)
+        return None
+
+    def get_profile_models(self) -> list[Profile]:
+        """Return all profiles as Profile domain model instances."""
+        return [Profile.from_dict(p) for p in self.data["profiles"] if isinstance(p, dict)]
 
     def add_profile(self, name: str, instance: dict[str, str], mod_hashes: list[str]) -> dict[str, Any]:
         """Create a profile linked to a Prism instance and mod set."""

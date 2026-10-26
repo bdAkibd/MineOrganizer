@@ -8,6 +8,7 @@ from services.log_analyzer import (
     analyze_instance_logs,
     analyze_log_content,
     list_available_log_files,
+    read_log_text_safely,
 )
 
 
@@ -81,6 +82,22 @@ Caused by: org.spongepowered.asm.mixin.injection.throwables.InjectionError: Crit
             analysis = analyze_instance_logs(instance)
             self.assertIsNotNone(analysis)
             self.assertEqual(analysis.category, "out_of_memory")
+
+    def test_read_log_text_safely_truncates_large_files(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            log_path = Path(temp_dir) / "huge.log"
+            # Write 500 KB log
+            chunk = "Line of log output test data\n" * 100
+            log_path.write_text(chunk * 100, encoding="utf-8")
+
+            # Read with a 2 KB limit
+            safe_text = read_log_text_safely(log_path, max_bytes=2048)
+            self.assertIn("Large log file", safe_text)
+            self.assertLessEqual(len(safe_text.encode("utf-8")), 3000)
+
+    def test_read_log_text_safely_missing_file(self):
+        missing = Path("non_existent_log_file.log")
+        self.assertEqual(read_log_text_safely(missing), "")
 
 
 if __name__ == "__main__":

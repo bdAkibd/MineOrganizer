@@ -1,8 +1,9 @@
 """Safe preview, application, and rollback of profile mod links."""
 
+import errno
 import json
 import os
-import errno
+import shutil
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
@@ -92,7 +93,7 @@ def find_mods_dir(instance_path: Path, profile: dict[str, Any] | None = None) ->
 
 
 def _is_library_link(path: Path, library_dir: Path) -> bool:
-    """Checks whether a symbolic link resolves to a file inside the library."""
+    """Checks whether a symbolic link, hard link, or managed copy resolves to a file inside the library."""
     if not path.exists():
         return False
     if path.is_symlink():
@@ -101,12 +102,16 @@ def _is_library_link(path: Path, library_dir: Path) -> bool:
             return path.is_file()
         except (OSError, ValueError):
             return False
-    # Windows hard links do not require the symlink privilege that causes WinError 1314.
     candidate = library_dir / path.name
     try:
-        return candidate.is_file() and os.path.samefile(path, candidate)
+        if candidate.is_file():
+            if os.path.samefile(path, candidate):
+                return True
+            if path.stat().st_size == candidate.stat().st_size and file_sha256(path) == file_sha256(candidate):
+                return True
     except OSError:
-        return False
+        pass
+    return False
 
 
 def preview_profile(profile: dict[str, Any], library_dir: Path) -> VirtualizationPlan:
@@ -163,8 +168,8 @@ def preview_profile(profile: dict[str, Any], library_dir: Path) -> Virtualizatio
     return plan
 
 
-def _create_library_reference(source: Path, destination: Path) -> str:
-    """Creates a symlink, falling back to a hard link on Windows without symlink privileges."""
+def create_library_reference(source: Path, destination: Path) -> str:
+    """Creates a symlink, falling back to a hard link or managed copy on Windows."""
     try:
         os.symlink(source, destination, target_is_directory=False)
         return "symlink"
@@ -175,11 +180,18 @@ def _create_library_reference(source: Path, destination: Path) -> str:
             os.link(source, destination)
             return "hardlink"
         except OSError as link_error:
+            # If cross-drive boundary (EXDEV / WinError 17) or permission denied, copy as fallback
+            if link_error.errno in {errno.EXDEV, errno.EPERM, errno.EACCES} or getattr(link_error, "winerror", None) in {17, 1314}:
+                shutil.copy2(source, destination)
+                return "copy"
             raise OSError(
                 link_error.errno,
-                f"Could not create a symbolic or hard link. Make sure the library and game are on the same drive. Original error: {error}",
+                f"Could not create reference link: {link_error}. Original error: {error}",
                 str(destination),
             ) from link_error
+
+
+_create_library_reference = create_library_reference
 
 
 def apply_profile(profile: dict[str, Any], library_dir: Path, backup_dir: Path | None = None) -> tuple[bool, str]:
@@ -288,7 +300,11 @@ def _undo_manifest(manifest: dict[str, Any], library_dir: Path | None) -> list[s
             if path.is_symlink():
                 is_ours = str(path.resolve()) == record["target"]
             elif path.exists() and target.exists():
-                is_ours = os.path.samefile(path, target)
+                is_ours = os.path.samefile(path, target) or (
+                    record.get("kind") == "copy"
+                    and path.stat().st_size == target.stat().st_size
+                    and file_sha256(path) == file_sha256(target)
+                )
             if is_ours:
                 path.unlink()
             elif path.exists() or path.is_symlink():
@@ -316,9 +332,17 @@ def _undo_manifest(manifest: dict[str, Any], library_dir: Path | None) -> list[s
             elif not target.is_file():
                 errors.append(f"Library file was not found; the link was not restored: {target}")
             elif record.get("kind") == "hardlink":
-                os.link(target, path)
+                try:
+                    os.link(target, path)
+                except OSError:
+                    create_library_reference(target, path)
+            elif record.get("kind") == "copy":
+                shutil.copy2(target, path)
             else:
-                os.symlink(target, path, target_is_directory=False)
+                try:
+                    os.symlink(target, path, target_is_directory=False)
+                except OSError:
+                    create_library_reference(target, path)
         except OSError as error:
             errors.append(f"{path}: {error}")
     return errors

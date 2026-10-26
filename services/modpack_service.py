@@ -294,6 +294,34 @@ def inspect_modpack(archive_path: Path) -> dict[str, Any]:
     return result
 
 
+def is_safe_rel_path(base_dir: Path | str, rel_path: str | None = None) -> bool:
+    """Verify that rel_path does not escape base_dir via directory traversal or absolute paths."""
+    if rel_path is None:
+        target_path = str(base_dir)
+        base = Path(".").resolve()
+    else:
+        target_path = rel_path
+        base = Path(base_dir).resolve()
+    try:
+        norm_path = target_path.replace("\\", "/")
+        if not norm_path or norm_path.startswith("/") or Path(target_path).is_absolute():
+            return False
+        clean = Path(norm_path).as_posix()
+        if not clean or clean == "." or clean.startswith("..") or "/../" in f"/{clean}/":
+            return False
+        dest_resolved = (base / clean).resolve()
+        return dest_resolved == base or dest_resolved.is_relative_to(base)
+    except (ValueError, OSError):
+        return False
+
+
+def safe_extract_zip_item(arc: zipfile.ZipFile, item: zipfile.ZipInfo, dest_file: Path) -> None:
+    """Extract a single zip member to dest_file safely."""
+    dest_file.parent.mkdir(parents=True, exist_ok=True)
+    with arc.open(item) as src, open(dest_file, "wb") as dst:
+        shutil.copyfileobj(src, dst)
+
+
 def import_modpack_archive(
     archive_path: Path,
     library_dir: Path,
@@ -357,7 +385,7 @@ def import_modpack_archive(
                         dst.write(src.read())
                     temp_sps.append(extracted_sp)
 
-                # 4. Extract Configs into instance
+                # 4. Extract Configs into instance safely
                 if extract_configs and inst_dir:
                     rel_cfg_path = None
                     if name.startswith("config/") and not item.is_dir():
@@ -365,30 +393,31 @@ def import_modpack_archive(
                     elif name.startswith("overrides/config/") and not item.is_dir():
                         rel_cfg_path = name[len("overrides/config/"):]
 
+                    cfg_root = inst_dir / "config"
                     if rel_cfg_path:
-                        dest_cfg = inst_dir / "config" / rel_cfg_path
-                        dest_cfg.parent.mkdir(parents=True, exist_ok=True)
-                        with arc.open(item) as src, open(dest_cfg, "wb") as dst:
-                            dst.write(src.read())
+                        if not is_safe_rel_path(cfg_root, rel_cfg_path):
+                            raise ValueError(f"Insecure path in archive: {name}")
+                        dest_cfg = cfg_root / rel_cfg_path
+                        safe_extract_zip_item(arc, item, dest_cfg)
                         configs_extracted_count += 1
 
-                # 5. Extract Saves (Worlds) into instance saves and/or save library
+                # 5. Extract Saves (Worlds) into instance saves and/or save library safely
                 if import_saves and name.startswith("saves/") and not item.is_dir():
                     rel_save_path = name[len("saves/"):]
                     if rel_save_path:
                         # Extract directly into instance saves
                         if inst_dir:
                             target_saves_dir = find_saves_dir(inst_dir)
+                            if not is_safe_rel_path(target_saves_dir, rel_save_path):
+                                raise ValueError(f"Insecure path in archive: {name}")
                             dest_save = target_saves_dir / rel_save_path
-                            dest_save.parent.mkdir(parents=True, exist_ok=True)
-                            with arc.open(item) as src, open(dest_save, "wb") as dst:
-                                dst.write(src.read())
+                            safe_extract_zip_item(arc, item, dest_save)
 
                         # Also extract into save library
+                        if not is_safe_rel_path(save_dir, rel_save_path):
+                            raise ValueError(f"Insecure path in archive: {name}")
                         dest_lib_save = save_dir / rel_save_path
-                        dest_lib_save.parent.mkdir(parents=True, exist_ok=True)
-                        with arc.open(item) as src, open(dest_lib_save, "wb") as dst:
-                            dst.write(src.read())
+                        safe_extract_zip_item(arc, item, dest_lib_save)
 
             # Count extracted saves by checking level.dat
             if import_saves:

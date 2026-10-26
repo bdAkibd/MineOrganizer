@@ -1338,24 +1338,25 @@ ADDITIONAL_TRANSLATIONS: Final[dict[str, dict[str, str]]] = {
 }
 
 
+_REVERSE_EXACT_MAP: Final[dict[str, str]] = {
+    translated: source for source, translated in ENGLISH_TRANSLATIONS.items()
+}
+for _sub_dict in ADDITIONAL_TRANSLATIONS.values():
+    _REVERSE_EXACT_MAP.update({translated: source for source, translated in _sub_dict.items()})
+
+_SORTED_FRAGMENT_REPLACEMENTS: Final[list[tuple[str, str]]] = sorted(
+    ((target, source_fragment) for source_fragment, target in ENGLISH_FRAGMENT_TRANSLATIONS.items()),
+    key=lambda item: len(item[0]),
+    reverse=True,
+)
+
+
 def _source_text(text: str) -> str:
     """Return the stable Russian source for text in any supported locale."""
-    exact_translations: dict[str, str] = {
-        translated: source
-        for source, translated in ENGLISH_TRANSLATIONS.items()
-    }
-    for translations in ADDITIONAL_TRANSLATIONS.values():
-        exact_translations.update({translated: source for source, translated in translations.items()})
-    source = exact_translations.get(text, text)
-
-    fragment_translations = {
-        target: source_fragment
-        for source_fragment, target in ENGLISH_FRAGMENT_TRANSLATIONS.items()
-    }
-    for translated_fragment, source_fragment in sorted(
-        fragment_translations.items(), key=lambda item: len(item[0]), reverse=True
-    ):
-        source = source.replace(translated_fragment, source_fragment)
+    source = _REVERSE_EXACT_MAP.get(text, text)
+    for translated_fragment, source_fragment in _SORTED_FRAGMENT_REPLACEMENTS:
+        if translated_fragment in source:
+            source = source.replace(translated_fragment, source_fragment)
     return source
 
 

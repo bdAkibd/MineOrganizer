@@ -27,6 +27,7 @@ from services.log_analyzer import (
     CrashAnalysis,
     analyze_log_content,
     list_available_log_files,
+    read_log_text_safely,
 )
 
 
@@ -188,10 +189,9 @@ class CrashLogAnalyzerDialog(QDialog):
         if not isinstance(path, Path) or not path.is_file():
             return
 
-        try:
-            content = path.read_text(encoding="utf-8", errors="replace")
-        except OSError as error:
-            self.log_browser.setPlainText(f"Could not read file: {error}")
+        content = read_log_text_safely(path)
+        if not content:
+            self.log_browser.setPlainText("File is empty or could not be read.")
             return
 
         file_type = "crash_report" if "crash-" in path.name else "log"

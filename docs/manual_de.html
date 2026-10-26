@@ -1,42 +1,142 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<style>
-body { font-family: sans-serif; line-height: 1.45; margin: 16px; max-width: 960px; }
-h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-li { margin: 5px 0; }
-code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
-</style>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+    h1 { margin-top: 0; color: #204a87; }
+    h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { margin-top: 18px; color: #3465a4; }
+    li { margin: 6px 0; }
+    code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+    .note { padding: 10px 14px; border-left: 4px solid #4f8cff; background: rgba(79,140,255,0.08); margin: 12px 0; }
+  </style>
 </head>
 <body>
-<h1>MineOrganizer – Benutzerhandbuch</h1>
-<p>MineOrganizer verwaltet Minecraft-Spielumgebungen, Mods, Spielstände, Ressourcenpakete, Shader, Profile, Konfigurationsdateien und Sicherungen in einem gemeinsamen Arbeitsbereich.</p>
+  <h1>MineOrganizer – Benutzerhandbuch</h1>
+  <p><b>MineOrganizer</b> ist ein Desktop-Manager für Minecraft-Spielumgebungen, Mods, Spielstände, Ressourcenpakete, Shader, Profile, Konfigurationsdateien und Backups. Er bündelt Dateien aus verschiedenen Launchern in einem zentralen Arbeitsbereich und ermöglicht das sichere Verwalten und Wechseln kompletter Spielinhalte.</p>
 
-<h2>Wofür das Programm gedacht ist</h2>
-<p>Nutzen Sie das Programm, um Installationen von Prism Launcher, CurseForge, dem offiziellen Launcher und benutzerdefinierten Verzeichnissen zu verwalten; eine Mod-Bibliothek mit Drag &amp; Drop und zwischengespeicherten Symbolen zu führen; Mods direkt über den integrierten Modrinth-Katalog zu durchsuchen, herunterzuladen und zu aktualisieren; fehlende Mod-Abhängigkeiten in Profilen aufzuspüren; Spielabstürze mit dem Crash- &amp; Log-Analyzer zu diagnostizieren; komplette Modpacks (Mods, Konfigurationen, Shader, Ressourcenpakete und Spielstände) zu exportieren und zu importieren; sowie Konfigurationen zu sichern und wiederherzustellen.</p>
-<p class="note"><b>Sicherheit:</b> Vorschau und Umgebungsprüfungen lesen Daten nur aus. Schließen Sie Minecraft, bevor Sie Profile anwenden, Ressourcen installieren, Sicherungen wiederherstellen oder Dateien einer aktiven Umgebung ändern.</p>
+  <h2>Wofür das Programm gedacht ist</h2>
+  <p>Nutzen Sie MineOrganizer, wenn Sie mehrere Minecraft-Installationen oder Mod-Sammlungen besitzen und Folgendes tun möchten:</p>
+  <ul>
+    <li>Umgebungen von Prism Launcher, CurseForge, dem offiziellen Minecraft-Launcher, TLauncher und benutzerdefinierten Spielverzeichnissen erkennen;</li>
+    <li>Eine zentrale, hochperformante Mod-Bibliothek mit Drag &amp; Drop-Import und gecachten Mod-Symbolen führen;</li>
+    <li>Mods direkt über den integrierten <b>Modrinth-Katalog</b> suchen, herunterladen und aktualisieren;</li>
+    <li>Fehlende Mod-Abhängigkeiten in Profilen automatisch erkennen;</li>
+    <li>Spielabstürze mit dem integrierten <b>Crash-Report- &amp; Log-Analyzer</b> schnell diagnostizieren;</li>
+    <li>Komplette Modpacks (inklusive Mods, Konfigurationen, Ressourcenpakete, Shader und Welten) als <code>.morgpack</code> / <code>.zip</code> exportieren und importieren;</li>
+    <li>Welten über den Reiter <code>saves</code> organisieren und installieren, ohne Spielordner manuell öffnen zu müssen;</li>
+    <li>Profile mit Mods, Ressourcenpaketen und Shadern über sichere virtuelle Verknüpfungen anwenden;</li>
+    <li>Zeitgestempelte Sicherungen von Konfigurationsdateien erstellen und mit einem Klick wiederherstellen.</li>
+  </ul>
+  <p class="note"><b>Sicherheit:</b> Vorschau und Umgebungsprüfungen sind reine Leseoperationen. Schließen Sie Minecraft, bevor Sie Profile anwenden, Ressourcen installieren, Backups wiederherstellen oder Dateien in einer aktiven Umgebung ändern.</p>
 
-<h2>Mod-Bibliothek &amp; Drag and Drop</h2>
-<p>Ziehen Sie Mod-JAR-Dateien einfach per Drag &amp; Drop in die Bibliothekstabelle. Metadaten und Symbole werden automatisch analysiert und für blitzschnellen Start zwischengespeichert. Die Tabelle bietet Schnellsuche sowie Filter nach Minecraft-Version und Mod-Loader.</p>
+  <h2>Erster Start</h2>
+  <ol>
+    <li>Öffnen Sie <b>Einstellungen → Sprache</b> und wählen Sie Ihre bevorzugte Oberflächensprache. Deutsch und Englisch werden neben 9 weiteren Sprachen voll unterstützt.</li>
+    <li>Wählen Sie unter <b>Ansicht</b> ein helles oder dunkles Design. Die Einstellungen werden automatisch gespeichert.</li>
+    <li>Öffnen Sie <b>Spielumgebungen</b> und klicken Sie auf <b>Aktualisieren</b>. MineOrganizer durchsucht bekannte Launcher-Verzeichnisse.</li>
+    <li>Falls eine Installation nicht erkannt wurde, nutzen Sie <b>Spielordner hinzufügen…</b>, <b>Prism-Ordner wählen…</b> oder erstellen Sie eine Instanz für den offiziellen Launcher.</li>
+  </ol>
 
-<h2>Modrinth-Katalog &amp; Aktualisierungen</h2>
-<ul>
-  <li><b>Modrinth-Katalog:</b> Durchsuchen und installieren Sie kompatible Mods direkt in der Anwendung.</li>
-  <li><b>Updates prüfen:</b> Vergleichen Sie Datei-Hashes mit Modrinth und laden Sie verfügbare Aktualisierungen mit einem Klick herunter.</li>
-</ul>
+  <h2>Mod-Bibliothek &amp; Drag and Drop</h2>
+  <ol>
+    <li><b>Drag &amp; Drop-Import:</b> Ziehen Sie eine oder mehrere Mod-JAR-Dateien aus Ihrem Dateimanager direkt auf die Bibliothekstabelle. Sie werden sofort kopiert, analysiert und mit Symbolen versehen.</li>
+    <li><b>Standard-Import:</b> Klicken Sie in der Symbolleiste auf <b>JAR importieren…</b> und wählen Sie Dateien aus.</li>
+    <li>Nutzen Sie die Live-Suche und Filter (Minecraft-Version, Loader, Kompatibilität), um große Sammlungen zu durchsuchen.</li>
+    <li>Klicken Sie mit der rechten Maustaste auf einen Eintrag, um Details anzuzeigen, Tags zu bearbeiten, Minecraft-Versionen zu überschreiben, den Speicherort zu öffnen oder Mods zu entfernen.</li>
+  </ol>
 
-<h2>Profile &amp; Abhängigkeiten</h2>
-<p>Profile verwalten ausgewählte Mod-Kombinationen für Ihre Spielumgebungen. Fehlende Bibliotheken (wie Fabric API) werden automatisch erkannt und können direkt aus Modrinth bezogen werden.</p>
+  <h2>Modrinth-Katalog &amp; Auto-Updates</h2>
+  <h3>Suchen und Installieren über Modrinth</h3>
+  <ol>
+    <li>Klicken Sie in der <b>Mod-Bibliothek</b> auf <b>Modrinth-Katalog</b>.</li>
+    <li>Geben Sie Suchbegriffe ein und filtern Sie nach Minecraft-Version und Loader (Fabric, Forge, NeoForge, Quilt).</li>
+    <li>Sehen Sie Beschreibungen, Autoren, Downloads und Kompatibilität ein. Klicken Sie auf das Download-Symbol, um kompatible JARs direkt in Ihre Bibliothek zu laden.</li>
+  </ol>
+  <h3>Updates prüfen</h3>
+  <ol>
+    <li>Klicken Sie in der Bibliothek oder im Kontextmenü eines Profils auf <b>Updates prüfen</b>.</li>
+    <li>MineOrganizer gleicht Datei-Hashes (SHA-1 / SHA-512) mit der Modrinth-API ab.</li>
+    <li>Wählen Sie im Fenster <b>Updates</b> die gewünschten Mods aus und klicken Sie auf <b>Ausgewählte aktualisieren</b>, um neue Versionen automatisch herunterzuladen.</li>
+  </ol>
 
-<h2>Modpack-Export &amp; Import</h2>
-<p>Exportieren Sie Profile als <code>.morgpack</code> oder <code>.zip</code> inklusive Mods, Konfigurationsordner (<code>config</code>), Ressourcenpakete, Shader und Welten (<code>saves</code>). Der Import richtet eine spielbereite Umgebung vollautomatisch ein.</p>
+  <h2>Profile &amp; Auflösung von Abhängigkeiten</h2>
+  <p>Ein Profil ist eine benannte Auswahl von Mods und Ressourcen für eine bestimmte Minecraft-Installation.</p>
+  <ol>
+    <li>Öffnen Sie <b>Profile</b>, wählen Sie eine Zielumgebung und klicken Sie auf <b>Profil erstellen…</b>.</li>
+    <li>Wählen Sie das Profil aus und klicken Sie auf <b>Mods bearbeiten…</b>.</li>
+    <li>Markieren Sie die gewünschten Mods für das Profil.</li>
+    <li><b>Automatische Abhängigkeitserkennung:</b> Benötigt eine Mod eine externe Bibliothek (z. B. Fabric API), weist MineOrganizer in der Kompatibilitätsspalte darauf hin und ermöglicht das direkte Herunterladen aus Modrinth.</li>
+  </ol>
 
-<h2>Crash-Report &amp; Log-Analyzer</h2>
-<p>Bei Abstürzen analysiert das Diagnose-Tool Berichte aus <code>crash-reports</code> oder <code>latest.log</code>, identifiziert fehlerhafte Mods, fehlende Abhängigkeiten oder Speicherfehler (OutOfMemory) und liefert konkrete Handlungsempfehlungen.</p>
+  <h2>Modpack-Export &amp; Import</h2>
+  <h3>Modpack exportieren</h3>
+  <ol>
+    <li>Wählen Sie ein Profil und klicken Sie auf <b>Modpack exportieren…</b> im Menü <b>Datei</b> oder in der Leiste.</li>
+    <li>Wählen Sie im Dialogfenster die gewünschten Komponenten:
+      <ul>
+        <li><b>Mods (JAR-Dateien):</b> Ausgewählte Profil-Mods.</li>
+        <li><b>Konfigurationen (config-Ordner):</b> Mod-Einstellungen der Umgebung.</li>
+        <li><b>Ressourcenpakete:</b> Texturen aus dem Ordner <code>resourcepacks</code>.</li>
+        <li><b>Shaderpakete:</b> Shader aus dem Ordner <code>shaderpacks</code>.</li>
+        <li><b>Spielstände:</b> Welten aus dem Ordner <code>saves</code>.</li>
+      </ul>
+    </li>
+    <li>Speichern Sie das Archiv als <code>.morgpack</code> oder <code>.zip</code>.</li>
+  </ol>
+  <h3>Modpack importieren</h3>
+  <ol>
+    <li>Wählen Sie <b>Modpack importieren…</b> im Menü <b>Datei</b>.</li>
+    <li>Wählen Sie eine <code>.morgpack</code>-, <code>.zip</code>- oder <code>.mrpack</code>-Datei aus.</li>
+    <li>Geben Sie Profilnamen und Zielumgebung an. Alle Mods, Konfigurationen, Ressourcen und Welten werden automatisch entpackt und spielfertig eingerichtet!</li>
+  </ol>
 
-<h2>Ressourcen, Spielstände &amp; Leistung</h2>
-<p>Unterstützt Drag &amp; Drop für Welten, Shader und Ressourcenpakete sowie permanentes Disk-Caching für sofortigen Start selbst bei Sammlungen mit tausenden Mods.</p>
+  <h2>Profil anwenden</h2>
+  <ol>
+    <li>Wählen Sie das Profil im Virtualisierungsbereich.</li>
+    <li>Klicken Sie auf <b>Vorschau</b> und überprüfen Sie alle geplanten Verknüpfungen.</li>
+    <li>Stellen Sie sicher, dass Minecraft und der Launcher geschlossen sind.</li>
+    <li>Klicken Sie auf <b>Profil anwenden</b>. MineOrganizer erstellt verwaltete Verknüpfungen in den Spielordner. Eigene Dateien werden niemals überschrieben.</li>
+    <li>Nutzen Sie <b>Letzte Anwendung zurücksetzen</b>, um Änderungen bei Bedarf rückgängig zu machen.</li>
+  </ol>
+
+  <h2>Crash-Report- &amp; Log-Analyzer</h2>
+  <p>Falls Minecraft nicht startet oder abstürzt, hilft der integrierte Log-Analyzer bei der schnellen Ursachenanalyse:</p>
+  <ol>
+    <li>Wählen Sie die Spielumgebung und klicken Sie auf <b>Absturz- &amp; Log-Analyse…</b>.</li>
+    <li>Wählen Sie den neuesten Absturzbericht (<code>crash-reports/crash-*.txt</code>) oder das Spiel-Log (<code>logs/latest.log</code>).</li>
+    <li>Der Analyzer erkennt automatisch:
+      <ul>
+        <li>Minecraft-Version und Mod-Loader;</li>
+        <li>Verdächtige Mods aus dem Stack-Trace des Absturzes;</li>
+        <li>Die Fehlerursache (fehlende Abhängigkeiten, Java-Inkompatibilität oder Speichermangel OutOfMemory);</li>
+        <li>Konkrete Lösungsschritte.</li>
+      </ul>
+    </li>
+    <li>Nutzen Sie <b>Zusammenfassung kopieren</b> oder <b>Vollständiges Log kopieren</b>, um Daten für Support-Foren bereitzustellen.</li>
+  </ol>
+
+  <h2>Saves</h2>
+  <p>Der Reiter <b>Saves</b> verwaltet Spielwelten für die gewählte Umgebung. Ziehen Sie Welt-Archive (ZIP) oder Ordner per Drag &amp; Drop direkt hinein. Wählen Sie eine Welt und klicken Sie auf <b>Ausgewählten Spielstand installieren</b>, um ihn in den <code>saves</code>-Ordner zu kopieren.</p>
+
+  <h2>Resource packs and shaders</h2>
+  <p>Ziehen Sie ZIP-Archive per Drag &amp; Drop direkt in die Tabellen für Ressourcenpakete oder Shader. Weisen Sie diese Profilen zu und wenden Sie sie über sichere Verknüpfungen an.</p>
+
+  <h2>Configs and Backups</h2>
+  <ul>
+    <li>Klicken Sie auf <b>Backup erstellen</b>, um eine zeitgestempelte Sicherung des <code>config</code>-Ordners anzulegen.</li>
+    <li>Wählen Sie ein Backup und klicken Sie auf <b>Archiv wiederherstellen…</b>. Vorhandene Einstellungen werden vor der Wiederherstellung automatisch gesichert.</li>
+  </ul>
+
+  <h2>Performance &amp; Caching</h2>
+  <p>MineOrganizer verfügt über einen persistenten Festplatten-Cache für Datei-Hashes und Metadaten. Nach der ersten Erkennung ermöglicht dies blitzschnelle Programmstarts und Bibliotheks-Scans mit tausenden Mods innerhalb von Millisekunden.</p>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><b>Umgebung fehlt:</b> Klicken Sie auf Aktualisieren oder wählen Sie das Verzeichnis manuell über «Spielordner hinzufügen…».</li>
+    <li><b>Anwenden schlägt fehl:</b> Beenden Sie Minecraft und Launcher, prüfen Sie die Vorschau und Dateiberechtigungen.</li>
+    <li><b>Spiel stürzt ab:</b> Öffnen Sie die Absturz- &amp; Log-Analyse, um die fehlerhafte Mod und Lösungshinweise einzusehen.</li>
+  </ul>
 </body>
 </html>

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from models.mod_file import ModFile
-from services.mod_library import file_sha1, file_sha256
+from services.mod_library import compute_file_digests, file_sha1, file_sha256
 from services.mod_metadata import ModMetadata, read_mod_metadata
 
 
@@ -195,8 +195,7 @@ class ModCache:
         def _process_one(idx: int) -> tuple[int, ModFile, ModMetadata, str]:
             file_path = files[idx]
             size = file_path.stat().st_size
-            h256 = file_sha256(file_path)
-            h1 = file_sha1(file_path)
+            h256, h1 = compute_file_digests(file_path)
             metadata = read_mod_metadata(file_path)
             return idx, ModFile(file_path.name, file_path, size, h256), metadata, h1
 

@@ -300,6 +300,30 @@ def analyze_log_content(
     return analysis
 
 
+MAX_LOG_READ_BYTES = 2 * 1024 * 1024  # 2 MB
+
+
+def read_log_text_safely(path: Path, max_bytes: int = MAX_LOG_READ_BYTES) -> str:
+    """Read a log file safely, capping huge logs to the trailing chunk where crashes appear."""
+    try:
+        size = path.stat().st_size
+        if size <= max_bytes:
+            return path.read_text(encoding="utf-8", errors="replace")
+        with path.open("rb") as f:
+            f.seek(size - max_bytes)
+            raw = f.read(max_bytes)
+            newline_idx = raw.find(b"\n")
+            if newline_idx != -1 and newline_idx < 2048:
+                raw = raw[newline_idx + 1 :]
+            prefix = (
+                f"[... Large log file ({size / (1024 * 1024):.1f} MB). "
+                f"Displaying latest entries ...]\n\n"
+            )
+            return prefix + raw.decode("utf-8", errors="replace")
+    except OSError:
+        return ""
+
+
 def analyze_instance_logs(
     instance_path: Path,
     known_mod_names: list[str] | None = None,
@@ -313,9 +337,8 @@ def analyze_instance_logs(
     crash_reports = [pair for pair in log_files if "crash-" in pair[1].name]
     target_pair = crash_reports[0] if crash_reports else log_files[0]
     selected_label, selected_path = target_pair
-    try:
-        content = selected_path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
+    content = read_log_text_safely(selected_path)
+    if not content:
         return None
 
     file_type = "crash_report" if "crash-" in selected_path.name else "log"

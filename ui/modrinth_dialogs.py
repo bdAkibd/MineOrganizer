@@ -278,13 +278,23 @@ class ModrinthSearchDialog(QDialog):
         self._running_workers.add(worker)
         worker.finished.connect(lambda: self._running_workers.discard(worker))
 
-    def closeEvent(self, event) -> None:
+    def _cleanup_workers(self) -> None:
+        """Gracefully stop and wait for all running workers before destruction."""
         for w in list(self._running_workers):
             if w.isRunning():
+                w.requestInterruption()
                 w.quit()
         for w in list(self._running_workers):
             if w.isRunning():
-                w.wait(400)
+                w.wait(1000)
+        self._running_workers.clear()
+
+    def reject(self) -> None:
+        self._cleanup_workers()
+        super().reject()
+
+    def closeEvent(self, event) -> None:
+        self._cleanup_workers()
         super().closeEvent(event)
 
     def _get_current_loader(self) -> str:
@@ -554,13 +564,27 @@ class ModUpdatesDialog(QDialog):
         self._running_workers.add(worker)
         worker.finished.connect(lambda: self._running_workers.discard(worker))
 
-    def closeEvent(self, event) -> None:
+    def _cleanup_workers(self) -> None:
+        """Gracefully stop and wait for all running workers before destruction."""
         for w in list(self._running_workers):
             if w.isRunning():
+                w.requestInterruption()
                 w.quit()
         for w in list(self._running_workers):
             if w.isRunning():
-                w.wait(400)
+                w.wait(1000)
+        self._running_workers.clear()
+
+    def reject(self) -> None:
+        self._cleanup_workers()
+        super().reject()
+
+    def accept(self) -> None:
+        self._cleanup_workers()
+        super().accept()
+
+    def closeEvent(self, event) -> None:
+        self._cleanup_workers()
         super().closeEvent(event)
 
     def _start_update_check(self) -> None:

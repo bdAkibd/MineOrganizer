@@ -1,14 +1,17 @@
 """Safe profile application for resource packs and shader packs."""
 
+import errno
 import json
 import os
+import shutil
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from services.asset_library import scan_assets
-from services.virtualization import default_backup_dir
+from services.asset_library import default_asset_library_dir, scan_assets
+from services.mod_library import file_sha256
+from services.virtualization import create_library_reference, default_backup_dir
 
 
 @dataclass(slots=True)
@@ -51,14 +54,25 @@ def _target_dir(instance_path: Path, category: str) -> Path:
 
 
 def _managed_link(path: Path, category_library: Path) -> bool:
-    """Checks that a symlink points to a file inside the relevant library."""
-    if not path.is_symlink() or not path.exists() or not path.is_file():
+    """Checks that a symlink, hardlink, or managed copy points to a file inside the relevant library."""
+    if not path.exists():
         return False
+    if path.is_symlink():
+        try:
+            path.resolve().relative_to(category_library.resolve())
+            return path.is_file()
+        except (OSError, ValueError):
+            return False
+    candidate = category_library / path.name
     try:
-        path.resolve().relative_to(category_library.resolve())
-        return True
-    except (OSError, ValueError):
-        return False
+        if candidate.is_file():
+            if os.path.samefile(path, candidate):
+                return True
+            if path.stat().st_size == candidate.stat().st_size and file_sha256(path) == file_sha256(candidate):
+                return True
+    except OSError:
+        pass
+    return False
 
 
 def preview_assets(profile: dict[str, Any], library_root: Path, kind: str) -> AssetPlan:
@@ -92,7 +106,22 @@ def preview_assets(profile: dict[str, Any], library_root: Path, kind: str) -> As
             continue
         if _managed_link(entry, category_library):
             wanted = desired_by_name.get(entry.name.casefold())
-            if wanted and entry.resolve() == wanted.path.resolve():
+            is_match = False
+            if wanted:
+                if entry.is_symlink():
+                    try:
+                        is_match = (entry.resolve() == wanted.path.resolve())
+                    except OSError:
+                        is_match = False
+                else:
+                    try:
+                        is_match = (
+                            (wanted.path.exists() and os.path.samefile(entry, wanted.path))
+                            or (entry.stat().st_size == wanted.path.stat().st_size and file_sha256(entry) == wanted.sha256)
+                        )
+                    except OSError:
+                        is_match = False
+            if is_match:
                 plan.actions.append(AssetAction(entry.name, "Keep link", "Already matches profile", entry))
             else:
                 plan.actions.append(AssetAction(entry.name, "Remove link", "Managed link to a library archive that is not selected in the profile", entry))
@@ -140,16 +169,26 @@ def apply_assets(profile: dict[str, Any], library_root: Path, kind: str, backup_
         for path in remove_paths:
             if not _managed_link(path, category_library):
                 raise RuntimeError(f"The link changed after preview: {path}")
-            manifest["removed_links"].append({"path": str(path), "target": str(path.resolve())})
+            is_symlink = path.is_symlink()
+            target_path = path.resolve() if is_symlink else (category_library / path.name).resolve()
+            manifest["removed_links"].append({
+                "path": str(path),
+                "target": str(target_path),
+                "kind": "symlink" if is_symlink else "hardlink",
+            })
             save_manifest()
             path.unlink()
         for asset in create_assets:
             destination = plan.target_dir / asset.name
             if destination.exists() or destination.is_symlink():
                 raise RuntimeError(f"Path is already occupied; the file was not overwritten: {destination}")
-            manifest["created_links"].append({"path": str(destination), "target": str(asset.path.resolve())})
+            kind = create_library_reference(asset.path, destination)
+            manifest["created_links"].append({
+                "path": str(destination),
+                "target": str(asset.path.resolve()),
+                "kind": kind,
+            })
             save_manifest()
-            os.symlink(asset.path, destination, target_is_directory=False)
     except (OSError, RuntimeError) as error:
         errors = _undo(manifest, category_library)
         manifest["rolled_back"] = not errors
@@ -190,8 +229,18 @@ def _undo(manifest: dict[str, Any], library_dir: Path) -> list[str]:
     errors: list[str] = []
     for record in reversed(manifest.get("created_links", [])):
         path = Path(record["path"])
+        target = Path(record["target"])
         try:
-            if path.is_symlink() and path.resolve() == Path(record["target"]).resolve():
+            is_ours = False
+            if path.is_symlink():
+                is_ours = str(path.resolve()) == record["target"]
+            elif path.exists() and target.exists():
+                is_ours = os.path.samefile(path, target) or (
+                    record.get("kind") == "copy"
+                    and path.stat().st_size == target.stat().st_size
+                    and file_sha256(path) == file_sha256(target)
+                )
+            if is_ours:
                 path.unlink()
             elif path.exists() or path.is_symlink():
                 errors.append(f"Changed path was preserved: {path}")
@@ -204,7 +253,18 @@ def _undo(manifest: dict[str, Any], library_dir: Path) -> list[str]:
             if path.exists() or path.is_symlink():
                 errors.append(f"Cannot restore; path is occupied: {path}")
             elif _is_inside(target, library_dir):
-                os.symlink(target, path, target_is_directory=False)
+                if record.get("kind") == "hardlink":
+                    try:
+                        os.link(target, path)
+                    except OSError:
+                        create_library_reference(target, path)
+                elif record.get("kind") == "copy":
+                    shutil.copy2(target, path)
+                else:
+                    try:
+                        os.symlink(target, path, target_is_directory=False)
+                    except OSError:
+                        create_library_reference(target, path)
             else:
                 errors.append(f"The target is no longer in the library: {target}")
         except OSError as error:

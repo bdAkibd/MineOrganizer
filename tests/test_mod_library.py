@@ -1,10 +1,11 @@
 """Tests for safe mod library import."""
 
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
 
-from services.mod_library import import_mods, scan_mods
+from services.mod_library import compute_file_digests, import_mods, scan_mods
 
 
 class ModLibraryTests(unittest.TestCase):
@@ -54,3 +55,18 @@ class ModLibraryTests(unittest.TestCase):
 
             self.assertEqual((imported, skipped, errors), (2, 0, []))
             self.assertEqual({mod.name for mod in scan_mods(library)}, {"mod.jar", "mod (2).jar"})
+
+    def test_compute_file_digests_single_pass(self) -> None:
+        """compute_file_digests accurately computes sha256 and sha1 in a single pass."""
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            test_file = Path(temporary_dir) / "sample.jar"
+            # 600 KB to test multi-chunk reading
+            payload = b"abcdef123456" * 50000
+            test_file.write_bytes(payload)
+
+            sha256, sha1 = compute_file_digests(test_file)
+
+            expected_sha256 = hashlib.sha256(payload).hexdigest()
+            expected_sha1 = hashlib.sha1(payload).hexdigest()
+            self.assertEqual(sha256, expected_sha256)
+            self.assertEqual(sha1, expected_sha1)

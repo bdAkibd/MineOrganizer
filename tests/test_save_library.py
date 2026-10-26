@@ -53,3 +53,18 @@ class SaveLibraryTests(unittest.TestCase):
             self.assertTrue(success)
             self.assertEqual([entry.name for entry in scan_saves(library)], ["AdventureWorld"])
             self.assertEqual((library / "AdventureWorld" / "level.dat").read_text(encoding="utf-8"), "world_data")
+
+    def test_import_save_from_zip_rejects_path_traversal(self) -> None:
+        """Saves with traversal members in zip archives are rejected safely."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive_path = root / "MaliciousSave.zip"
+            with zipfile.ZipFile(archive_path, "w") as archive:
+                archive.writestr("level.dat", "world_data")
+                archive.writestr("../escaped.txt", "escape")
+            library = root / "library"
+
+            success, msg = import_save(archive_path, library)
+            self.assertFalse(success)
+            self.assertIn("unsafe path", msg.lower())
+            self.assertFalse((root / "escaped.txt").exists())

@@ -12,6 +12,7 @@ from services.modpack_service import (
     export_profile_to_modpack,
     import_modpack_archive,
     inspect_modpack,
+    is_safe_rel_path,
 )
 from services.user_data import UserDataStore
 
@@ -141,6 +142,57 @@ class ModpackServiceTests(unittest.TestCase):
             self.assertEqual(profiles[0]["name"], "Imported Pack")
             self.assertIn(mod1_hash, profiles[0]["enabled_mod_hashes"])
             self.assertIn(rp_hash, profiles[0]["enabled_resourcepack_hashes"])
+
+    def test_is_safe_rel_path(self):
+        """Verify is_safe_rel_path blocks path traversal and absolute paths."""
+        self.assertTrue(is_safe_rel_path("options.txt"))
+        self.assertTrue(is_safe_rel_path("sub/folder/file.json"))
+        self.assertFalse(is_safe_rel_path("../evil.txt"))
+        self.assertFalse(is_safe_rel_path("sub/../../evil.txt"))
+        self.assertFalse(is_safe_rel_path("/etc/passwd"))
+        self.assertFalse(is_safe_rel_path("C:\\Windows\\system.ini"))
+        self.assertFalse(is_safe_rel_path(""))
+
+    def test_import_modpack_rejects_zip_slip(self):
+        """Archives containing traversal paths are safely rejected without writing outside target."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            pack_path = temp_path / "malicious.zip"
+            with zipfile.ZipFile(pack_path, "w") as arc:
+                arc.writestr("manifest.json", json.dumps({
+                    "manifest_version": 1,
+                    "profile_name": "SlipPack",
+                    "minecraft_version": "1.20.1",
+                    "loader": "Fabric",
+                    "loader_version": "0.15.11",
+                    "mods": [],
+                    "resourcepacks": [],
+                    "shaderpacks": [],
+                    "saves": [],
+                }))
+                arc.writestr("config/../../escaped.txt", "pwned")
+
+            user_data = UserDataStore(temp_path / "user_data.json")
+            inst_dir = temp_path / "instance"
+            inst_dir.mkdir()
+            target_instance = {
+                "instance_id": "test",
+                "instance_path": str(inst_dir),
+                "minecraft_version": "1.20.1",
+                "loader": "Fabric",
+                "loader_version": "0.15.11",
+            }
+
+            with self.assertRaises(ValueError) as ctx:
+                import_modpack_archive(
+                    archive_path=pack_path,
+                    library_dir=temp_path / "library",
+                    user_data=user_data,
+                    target_instance=target_instance,
+                    extract_configs=True,
+                )
+            self.assertIn("Insecure path in archive", str(ctx.exception))
+            self.assertFalse((temp_path / "escaped.txt").exists())
 
 
 if __name__ == "__main__":

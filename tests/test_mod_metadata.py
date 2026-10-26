@@ -221,6 +221,22 @@ class ModMetadataTests(unittest.TestCase):
             metadata = read_mod_metadata(jar)
             self.assertEqual(compatibility_for_profile(metadata, "1.20.1", "fabric")[0], "Unknown")
 
+    def test_modrinth_cache_thread_safety(self):
+        """Concurrent writes and reads to modrinth cache are thread-safe."""
+        import concurrent.futures
+        from services.mod_metadata import _store_modrinth_cache, _modrinth_cache
+
+        def worker(idx: int):
+            for i in range(20):
+                _store_modrinth_cache(f"hash_{idx}_{i}", {"name": f"mod_{idx}_{i}"})
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+            futures = [executor.submit(worker, i) for i in range(8)]
+            for f in futures:
+                f.result()
+
+        self.assertIn("hash_0_0", _modrinth_cache)
+
 
 if __name__ == "__main__":
     unittest.main()

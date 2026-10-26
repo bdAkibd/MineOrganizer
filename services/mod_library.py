@@ -16,6 +16,17 @@ def default_library_dir() -> Path:
     return Path.home() / ".local" / "share" / "MineOrganizer" / "library" / "mods"
 
 
+def compute_file_digests(path: Path) -> tuple[str, str]:
+    """Compute file SHA-256 and SHA-1 digests simultaneously in a single read pass."""
+    sha256 = hashlib.sha256()
+    sha1 = hashlib.sha1()
+    with path.open("rb") as file:
+        while chunk := file.read(256 * 1024):
+            sha256.update(chunk)
+            sha1.update(chunk)
+    return sha256.hexdigest(), sha1.hexdigest()
+
+
 def file_sha256(path: Path) -> str:
     """Compute a file SHA-256 digest using streaming reads."""
     digest = hashlib.sha256()

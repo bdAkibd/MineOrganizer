@@ -24,6 +24,28 @@ class TestManual(unittest.TestCase):
         self.assertEqual(manual_path("ru").name, "manual_ru.html")
         self.assertIn('<html lang="ru">', manual)
 
+    def test_all_localized_manuals_match_canonical_english_structure(self):
+        en_html = load_manual_html("en")
+        en_h2_count = en_html.count("<h2>")
+        en_h3_count = en_html.count("<h3>")
+
+        from services.localization import SUPPORTED_LOCALES
+
+        for locale in SUPPORTED_LOCALES:
+            html = load_manual_html(locale)
+            self.assertEqual(
+                html.count("<h2>"),
+                en_h2_count,
+                f"Locale '{locale}' h2 section count differs from English canonical manual",
+            )
+            self.assertEqual(
+                html.count("<h3>"),
+                en_h3_count,
+                f"Locale '{locale}' h3 subsection count differs from English canonical manual",
+            )
+
     def test_missing_manual_locale_falls_back_to_english(self):
         self.assertEqual(load_manual_html("missing"), load_manual_html("en"))
+
+
 

@@ -5,6 +5,7 @@ import hashlib
 import os
 import re
 import tempfile
+import threading
 import time
 import tomllib
 import urllib.error
@@ -19,6 +20,7 @@ _MODRINTH_CACHE_TTL = 30 * 24 * 60 * 60
 _MODRINTH_MISS_TTL = 6 * 60 * 60
 _modrinth_cache: dict[str, tuple[float, dict[str, Any]]] = {}
 _modrinth_cache_loaded = False
+_modrinth_cache_lock = threading.Lock()
 
 
 @dataclass(slots=True)
@@ -303,15 +305,16 @@ def _modrinth_metadata(path: Path) -> dict[str, Any]:
     file_hash = ""
     try:
         file_hash = _file_sha1(path)
-        if not _modrinth_cache_loaded:
-            _load_modrinth_cache()
-            _modrinth_cache_loaded = True
-        cached = _modrinth_cache.get(file_hash)
-        if cached:
-            checked_at, cached_data = cached
-            ttl = _MODRINTH_CACHE_TTL if cached_data else _MODRINTH_MISS_TTL
-            if time.time() - checked_at < ttl:
-                return dict(cached_data)
+        with _modrinth_cache_lock:
+            if not _modrinth_cache_loaded:
+                _load_modrinth_cache()
+                _modrinth_cache_loaded = True
+            cached = _modrinth_cache.get(file_hash)
+            if cached:
+                checked_at, cached_data = cached
+                ttl = _MODRINTH_CACHE_TTL if cached_data else _MODRINTH_MISS_TTL
+                if time.time() - checked_at < ttl:
+                    return dict(cached_data)
         url = f"https://api.modrinth.com/v2/version_file/{file_hash}?algorithm=sha1"
         request = urllib.request.Request(
             url,
@@ -367,23 +370,24 @@ def _load_modrinth_cache() -> None:
 
 def _store_modrinth_cache(file_hash: str, data: dict[str, Any]) -> None:
     """Store one lookup and update the cache atomically."""
-    _modrinth_cache[file_hash] = (time.time(), dict(data))
-    path = _modrinth_cache_path()
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {
-            key: {"checked_at": checked_at, "data": value}
-            for key, (checked_at, value) in _modrinth_cache.items()
-        }
-        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False, suffix=".tmp") as stream:
-            json.dump(payload, stream, ensure_ascii=False)
-            temporary_path = Path(stream.name)
-        temporary_path.replace(path)
-    except OSError:
+    with _modrinth_cache_lock:
+        _modrinth_cache[file_hash] = (time.time(), dict(data))
+        path = _modrinth_cache_path()
         try:
-            temporary_path.unlink(missing_ok=True)
-        except (NameError, OSError):
-            pass
+            path.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                key: {"checked_at": checked_at, "data": value}
+                for key, (checked_at, value) in _modrinth_cache.items()
+            }
+            with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False, suffix=".tmp") as stream:
+                json.dump(payload, stream, ensure_ascii=False)
+                temporary_path = Path(stream.name)
+            temporary_path.replace(path)
+        except OSError:
+            try:
+                temporary_path.unlink(missing_ok=True)
+            except (NameError, OSError):
+                pass
 
 
 def _version_from_filename(path: Path, minecraft_ranges: list[str]) -> str:

@@ -47,6 +47,16 @@ def scan_saves(library_dir: Path) -> list[SaveEntry]:
     return [SaveEntry(item.name, item, _directory_size(item)) for item in directories]
 
 
+def _is_safe_zip_path(base_dir: Path, target_path: Path) -> bool:
+    """Ensure target_path does not escape base_dir."""
+    try:
+        base_res = base_dir.resolve()
+        target_res = target_path.resolve()
+        return target_res == base_res or target_res.is_relative_to(base_res)
+    except (ValueError, OSError):
+        return False
+
+
 def import_save(source: Path, library_dir: Path) -> tuple[bool, str]:
     """Copy a world folder or extract a world archive into the library without overwriting an existing world."""
     if source.is_file() and source.suffix.lower() == ".zip":
@@ -65,16 +75,34 @@ def import_save(source: Path, library_dir: Path) -> tuple[bool, str]:
                     if destination.exists():
                         return False, f'Save "{world_folder}" already exists in the library.'
                     for member in archive.infolist():
-                        norm = member.filename.replace("\\", "/")
+                        norm = member.filename.replace("\\", "/").lstrip("/")
                         if norm.startswith(world_folder + "/") or norm == world_folder:
-                            archive.extract(member, library_dir)
+                            target_file = (library_dir / norm).resolve()
+                            if not _is_safe_zip_path(destination, target_file):
+                                return False, f"Unsafe path in save archive: {member.filename}"
+                            if member.is_dir():
+                                target_file.mkdir(parents=True, exist_ok=True)
+                            else:
+                                target_file.parent.mkdir(parents=True, exist_ok=True)
+                                with archive.open(member) as src, open(target_file, "wb") as dst:
+                                    shutil.copyfileobj(src, dst)
                 else:
                     world_folder = source.stem
                     destination = library_dir / world_folder
                     if destination.exists():
                         return False, f'Save "{world_folder}" already exists in the library.'
                     destination.mkdir(parents=True, exist_ok=True)
-                    archive.extractall(destination)
+                    for member in archive.infolist():
+                        norm = member.filename.replace("\\", "/").lstrip("/")
+                        target_file = (destination / norm).resolve()
+                        if not _is_safe_zip_path(destination, target_file):
+                            return False, f"Unsafe path in save archive: {member.filename}"
+                        if member.is_dir():
+                            target_file.mkdir(parents=True, exist_ok=True)
+                        else:
+                            target_file.parent.mkdir(parents=True, exist_ok=True)
+                            with archive.open(member) as src, open(target_file, "wb") as dst:
+                                shutil.copyfileobj(src, dst)
                 return True, f"Save imported: {destination}"
         except (OSError, zipfile.BadZipFile) as error:
             return False, f"Could not extract save archive: {error}"

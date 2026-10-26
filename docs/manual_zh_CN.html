@@ -1,42 +1,142 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<style>
-body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
-h1 { margin-top: 0; color: #204a87; } h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-li { margin: 5px 0; }
-code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
-.note { padding: 9px 12px; border-left: 4px solid #6d9ee8; background: rgba(109,158,232,0.12); margin: 12px 0; }
-</style>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: sans-serif; line-height: 1.5; margin: 16px; max-width: 960px; }
+    h1 { margin-top: 0; color: #204a87; }
+    h2 { margin-top: 24px; color: #2b5797; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { margin-top: 18px; color: #3465a4; }
+    li { margin: 6px 0; }
+    code { font-family: Consolas, monospace; background: rgba(0,0,0,0.06); padding: 2px 4px; border-radius: 3px; }
+    .note { padding: 10px 14px; border-left: 4px solid #4f8cff; background: rgba(79,140,255,0.08); margin: 12px 0; }
+  </style>
 </head>
 <body>
-<h1>MineOrganizer 用户手册</h1>
-<p>MineOrganizer 是一款集中管理 Minecraft 游戏环境、模组 (Mod)、存档 (Saves)、资源包、光影、配置文件与备份的桌面管理工具。</p>
+  <h1>MineOrganizer 用户手册</h1>
+  <p><b>MineOrganizer</b> 是一款集中管理 Minecraft 游戏环境、模组 (Mod)、世界存档、资源包、光影、配置文件及备份的桌面管理工具。它将不同启动器的文件整合到统一的工作区中，帮助您安全地管理和切换完整的游戏内容方案。</p>
 
-<h2>核心功能</h2>
-<p>支持管理 Prism Launcher、CurseForge、官方启动器及自定义游戏目录；具备拖放导入 (Drag &amp; Drop) 与图标缓存的高性能 Mod 库；内置 <b>Modrinth 模组库</b>，支持直接搜索、下载与一键检查更新；自动检测配置方案中的依赖缺失；内置<b>崩溃与日志分析器</b>快速排查游戏闪退；支持导出与导入完整整合包（包含 Mod、<code>config</code> 配置、光影、材质包与世界存档）；安全链接虚拟化与配置备份。</p>
-<p class="note"><b>安全提示：</b> 在应用配置方案、安装资源或恢复备份前，请务必先关闭 Minecraft 游戏客户端。</p>
+  <h2>核心功能</h2>
+  <p>当您拥有多个 Minecraft 安装实例或模组收藏，并希望实现以下操作时，请使用 MineOrganizer：</p>
+  <ul>
+    <li>自动识别来自 Prism Launcher、CurseForge、Minecraft 官方启动器、TLauncher 以及自定义游戏目录的环境；</li>
+    <li>维护集中式的高性能模组库，支持拖放导入 (Drag &amp; Drop) 与模组图标缓存；</li>
+    <li>通过内置的 <b>Modrinth 模组库</b> 直接搜索、下载与一键检查更新模组；</li>
+    <li>自动检测配置方案中缺失的必要前置模组依赖；</li>
+    <li>利用集成的<b>崩溃报告与日志分析器</b>快速排查游戏崩溃与闪退问题；</li>
+    <li>以 <code>.morgpack</code> / <code>.zip</code> 格式完整导出与导入整合包（包括模组、配置文件、资源包、光影与世界存档）；</li>
+    <li>通过 <code>saves</code> 标签页整理并安装世界存档，无需手动翻找游戏文件夹；</li>
+    <li>使用安全的虚拟链接应用包含模组、资源包与光影的配置方案；</li>
+    <li>创建带有时间戳的配置备份，并支持一键安全还原。</li>
+  </ul>
+  <p class="note"><b>安全提示：</b> 预览与环境检查均为只读操作。在应用方案、安装资源、恢复备份或更改活跃环境的文件之前，请务必先退出 Minecraft 游戏客户端。</p>
 
-<h2>模组库与拖放导入</h2>
-<p>只需将 Mod 的 JAR 文件从文件管理器拖放到模组库表格中即可快速导入。系统会自动提取元数据并缓存内置图标，支持按 Minecraft 版本与加载器即时筛选。</p>
+  <h2>首次启动</h2>
+  <ol>
+    <li>打开<b>设置 → 语言</b>并选择您的首选界面语言。简体中文与英语以及其他9种语言均获得全面支持。</li>
+    <li>在<b>视图</b>菜单中选择浅色或深色主题，设置将自动保存。</li>
+    <li>进入<b>游戏环境</b>标签页并点击<b>刷新</b>，MineOrganizer 将扫描已知的启动器位置。</li>
+    <li>如果未能自动检测到实例，可使用<b>添加游戏文件夹…</b>、<b>选择 Prism 文件夹…</b>或为官方启动器创建实例。</li>
+  </ol>
 
-<h2>Modrinth 模组库与自动更新</h2>
-<ul>
-  <li><b>Modrinth 模组库：</b> 无需打开浏览器，直接在软件内搜索并下载兼容版本的 Mod。</li>
-  <li><b>检查更新：</b> 自动比对文件哈希值，一键批量下载更新最新版本。</li>
-</ul>
+  <h2>模组库与拖放导入 (Drag &amp; Drop)</h2>
+  <ol>
+    <li><b>快速导入 (Drag &amp; Drop)：</b>直接将一个或多个模组 JAR 文件从文件管理器拖放到模组库表格中。系统将立即复制、解析并展示缓存的模组图标。</li>
+    <li><b>标准导入：</b>点击工具栏上的<b>导入 JAR…</b>按钮并选取文件。</li>
+    <li>使用即时搜索框和多重过滤器（Minecraft 版本、加载器、兼容性）在大型模组库中迅速定位。</li>
+    <li>右键点击任意项目可查看详细元数据、编辑标签、手动重写 Minecraft 版本或移除模组。</li>
+  </ol>
 
-<h2>配置方案与依赖解析</h2>
-<p>为不同的游戏实例创建专属方案。若选中的 Mod 缺少必要的前置依赖（如 Fabric API），软件将在兼容性一栏提示并可一键跳转下载。</p>
+  <h2>Modrinth 模组库与自动更新</h2>
+  <h3>从 Modrinth 浏览并安装</h3>
+  <ol>
+    <li>在<b>模组库</b>中点击 <b>Modrinth 模组库</b>。</li>
+    <li>输入关键词搜索，并根据 Minecraft 版本和模组加载器（Fabric、Forge、NeoForge、Quilt）进行筛选。</li>
+    <li>查看模组描述、作者、下载量与兼容性。点击下载按钮即可将兼容版本的 JAR 文件直接保存到模组库中。</li>
+  </ol>
+  <h3>检查更新</h3>
+  <ol>
+    <li>在模组库或方案右键菜单中点击<b>检查更新</b>。</li>
+    <li>MineOrganizer 将文件的哈希值（SHA-1 / SHA-512）与 Modrinth API 进行比对。</li>
+    <li>在<b>更新</b>窗口中勾选目标模组，点击<b>更新所选</b>即可自动下载最新版本。</li>
+  </ol>
 
-<h2>整合包导出与导入</h2>
-<p>可将配置方案打包导出为 <code>.morgpack</code> 或 <code>.zip</code> 整合包，打包内容可自由勾选 Mod、配置文件目录 (<code>config</code>)、光影包、资源包及世界存档 (<code>saves</code>)。导入整合包时将自动解压并还原为即玩环境。</p>
+  <h2>配置方案与依赖解析</h2>
+  <p>配置方案是针对特定 Minecraft 游戏环境配置的一套专属模组与资源组合。</p>
+  <ol>
+    <li>进入<b>配置方案</b>标签页，选择目标环境并点击<b>创建方案…</b>。</li>
+    <li>选中该方案并点击<b>修改模组…</b>。</li>
+    <li>勾选需要包含在该方案中的模组。</li>
+    <li><b>自动依赖解析：</b>如果选取的模组缺少必要的前置库（如 Fabric API），软件将在兼容性一栏提示，并支持一键跳转到 Modrinth 模组库下载。</li>
+  </ol>
 
-<h2>崩溃报告与日志分析</h2>
-<p>游戏发生崩溃时，通过分析器读取 <code>crash-reports</code> 或 <code>latest.log</code>，自动识别引发崩溃的 Mod、依赖冲突、Java 版本问题或内存不足 (OutOfMemory)，并提供清晰的修复指引与一键复制功能。</p>
+  <h2>整合包导出与导入</h2>
+  <h3>导出整合包</h3>
+  <ol>
+    <li>选中方案，点击<b>文件</b>菜单或工具栏中的<b>导出整合包…</b>。</li>
+    <li>在选项对话框中自由勾选要打包的组件：
+      <ul>
+        <li><b>模组 (JAR 文件)：</b>方案内选中的模组。</li>
+        <li><b>配置 (config 文件夹)：</b>当前环境的模组配置文件。</li>
+        <li><b>资源包：</b><code>resourcepacks</code> 目录下的材质包。</li>
+        <li><b>光影包：</b><code>shaderpacks</code> 目录下的光影包。</li>
+        <li><b>世界存档：</b><code>saves</code> 目录下的存档。</li>
+      </ul>
+    </li>
+    <li>保存为 <code>.morgpack</code> 或 <code>.zip</code> 格式。</li>
+  </ol>
+  <h3>导入整合包</h3>
+  <ol>
+    <li>点击<b>文件</b>菜单中的<b>导入整合包…</b>。</li>
+    <li>选择 <code>.morgpack</code>、<code>.zip</code> 或 <code>.mrpack</code> 文件。</li>
+    <li>指定新方案名称与目标环境。所有模组、配置、资源和存档将自动解压并就绪！</li>
+  </ol>
 
-<h2>存档、光影与性能缓存</h2>
-<p>存档、光影与材质包均支持拖放导入。通过本地磁盘持久化哈希缓存，即使管理数千个 Mod 也能实现瞬间极速加载。</p>
+  <h2>应用配置方案</h2>
+  <ol>
+    <li>在虚拟化控制区中选择方案。</li>
+    <li>点击<b>预览</b>仔细查看计划创建的链接操作。</li>
+    <li>确保 Minecraft 游戏客户端及启动器均已关闭。</li>
+    <li>点击<b>应用方案</b>。MineOrganizer 将创建受控的虚拟化链接，绝不会覆盖用户原有的常规文件。</li>
+    <li>如需撤销，可随时使用<b>撤销上次应用</b>。</li>
+  </ol>
+
+  <h2>崩溃报告与日志分析器</h2>
+  <p>当 Minecraft 无法启动或在游戏过程中发生闪退时，使用内置分析器可即刻查明原因：</p>
+  <ol>
+    <li>选择游戏环境并点击<b>崩溃与日志分析…</b>。</li>
+    <li>选择最新的崩溃报告（<code>crash-reports/crash-*.txt</code>）或运行日志（<code>logs/latest.log</code>）。</li>
+    <li>分析器将自动识别：
+      <ul>
+        <li>Minecraft 版本与模组加载器；</li>
+        <li>错误堆栈追踪 (StackTrace) 中指出的引发崩溃的模组；</li>
+        <li>问题的根本原因（依赖缺失、Java 版本不兼容或 OutOfMemory 内存溢出）；</li>
+        <li>具体的排查与解决建议。</li>
+      </ul>
+    </li>
+    <li>使用<b>复制摘要</b>或<b>复制完整日志</b>可方便地在社区论坛或 Discord 寻求技术支持。</li>
+  </ol>
+
+  <h2>Saves</h2>
+  <p><b>Saves</b> 标签页用于管理目标环境的 Minecraft 世界存档。直接将存档 ZIP 压缩包或文件夹拖放到此页。选择存档并点击<b>安装选中的存档</b>即可将其部署到当前活跃环境的 <code>saves</code> 目录中。</p>
+
+  <h2>Resource packs and shaders</h2>
+  <p>将 ZIP 压缩包直接拖放到资源包或光影包表格中。将其分配给方案，并通过受保护的安全链接生效。</p>
+
+  <h2>Configs and Backups</h2>
+  <ul>
+    <li>点击<b>创建备份</b>可将选定环境的 <code>config</code> 目录打包保存并附带时间戳。</li>
+    <li>选择历史备份并点击<b>还原备份…</b>即可安全回退设置。还原前系统会自动备份当前配置。</li>
+  </ul>
+
+  <h2>Performance &amp; Caching</h2>
+  <p>MineOrganizer 配备了本地磁盘持久化哈希与元数据缓存。初次解析后，即使管理拥有数千模组的庞大库，后续启动和库扫描也仅需数毫秒，无需再次读取 JAR 文件。</p>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><b>未找到环境：</b>点击「刷新」或使用「添加游戏文件夹…」手动选择游戏路径。</li>
+    <li><b>应用方案失败：</b>请先关闭 Minecraft 与启动器，检查预览信息与磁盘写入权限。</li>
+    <li><b>游戏闪退崩溃：</b>打开「崩溃与日志分析…」查看故障模组及详细修复指引。</li>
+  </ul>
 </body>
 </html>
