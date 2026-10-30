@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-from services.localization import SUPPORTED_LOCALES
+from services.localization import SUPPORTED_LOCALES, translate
 
 
 def _find_manual_dir() -> Path:
@@ -66,13 +66,8 @@ def load_manual_html(locale: str = DEFAULT_LOCALE) -> str:
         pass
 
     # Safe fallback if docs could not be loaded
-    is_ru = (locale == "ru" or locale == "uk")
-    title = "Руководство пользователя MineOrganizer" if is_ru else "MineOrganizer User Manual"
-    msg = (
-        "Файл руководства пользователя не найден в каталоге приложения. Пожалуйста, проверьте наличие папки docs."
-        if is_ru
-        else "The manual file could not be loaded. Please check that the docs directory is present."
-    )
+    title = translate("MineOrganizer User Manual", locale)
+    msg = translate("The user manual file was not found in the application directory. Please check the docs folder.", locale)
     return (
         f"<!DOCTYPE html><html><head><meta charset='utf-8'>"
         f"<style>body {{ font-family: system-ui, sans-serif; padding: 24px; line-height: 1.6; color: #333; }} "

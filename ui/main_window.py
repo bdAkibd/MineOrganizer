@@ -391,35 +391,35 @@ class ExportModpackDialog(QDialog):
     ) -> None:
         super().__init__(parent)
         self.locale = locale
-        self.setWindowTitle(translate("Параметры экспорта модпака", self.locale))
+        self.setWindowTitle(translate("Modpack Export Options", self.locale))
         self.setWindowIcon(QIcon(str(app_icon_path())))
         self.resize(440, 260)
 
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel(f"<b>{translate('Экспорт профиля:', self.locale)} {profile_name}</b>"))
-        layout.addWidget(QLabel(translate("Выберите компоненты для включения в модпак:", self.locale)))
+        layout.addWidget(QLabel(f"<b>{translate('Export profile:', self.locale)} {profile_name}</b>"))
+        layout.addWidget(QLabel(translate("Select components to include in modpack:", self.locale)))
 
-        self.cb_mods = QCheckBox(translate("Моды (JAR-файлы)", self.locale))
+        self.cb_mods = QCheckBox(translate("Mods (JAR files)", self.locale))
         self.cb_mods.setChecked(True)
         self.cb_mods.setEnabled(False)
         layout.addWidget(self.cb_mods)
 
-        self.cb_configs = QCheckBox(translate("Конфигурации (папка config)", self.locale))
+        self.cb_configs = QCheckBox(translate("Configurations (config folder)", self.locale))
         self.cb_configs.setChecked(has_configs)
         self.cb_configs.setEnabled(has_configs)
         layout.addWidget(self.cb_configs)
 
-        self.cb_rp = QCheckBox(translate("Ресурспаки (текстуры)", self.locale))
+        self.cb_rp = QCheckBox(translate("Resource packs (textures)", self.locale))
         self.cb_rp.setChecked(has_rp)
         self.cb_rp.setEnabled(has_rp)
         layout.addWidget(self.cb_rp)
 
-        self.cb_sp = QCheckBox(translate("Шейдерпаки (шейдеры)", self.locale))
+        self.cb_sp = QCheckBox(translate("Shader packs (shaders)", self.locale))
         self.cb_sp.setChecked(has_sp)
         self.cb_sp.setEnabled(has_sp)
         layout.addWidget(self.cb_sp)
 
-        self.cb_saves = QCheckBox(translate("Сохранения (миры)", self.locale))
+        self.cb_saves = QCheckBox(translate("Saves (worlds)", self.locale))
         self.cb_saves.setChecked(False)
         self.cb_saves.setEnabled(has_saves)
         layout.addWidget(self.cb_saves)
@@ -564,7 +564,19 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(APP_SHORT_NAME)
         for widget in self.findChildren(QAbstractButton):
             widget.setText(translate(widget.text(), self.locale))
+        dynamic_labels = {
+            getattr(self, name, None) for name in (
+                "path_label",
+                "status_label",
+                "library_path_label",
+                "saves_path_label",
+                "virtualization_path_label",
+                "asset_preview_label",
+            )
+        }
         for widget in self.findChildren(QLabel):
+            if widget in dynamic_labels:
+                continue
             widget.setText(translate(widget.text(), self.locale))
         for combo in self.findChildren(QComboBox):
             for index in range(combo.count()):
@@ -596,7 +608,6 @@ class MainWindow(QMainWindow):
         self.refresh_profiles()
         self.refresh_assets()
         self.refresh_config_backup_choices()
-        self._apply_locale(locale)
 
     def choose_locale(self) -> None:
         """Open the locale selector from the Settings menu."""
@@ -684,20 +695,20 @@ class MainWindow(QMainWindow):
         filter_row = QHBoxLayout()
         filter_row.addWidget(QLabel("Filter:"))
         self.mod_search_input = QLineEdit()
-        self.mod_search_input.setPlaceholderText(translate("Поиск модов…", self.locale))
+        self.mod_search_input.setPlaceholderText(translate("Search mods…", self.locale))
         self.mod_search_input.setClearButtonEnabled(True)
         self.mod_search_input.textChanged.connect(self._filter_library_table)
         filter_row.addWidget(self.mod_search_input, 2)
 
         filter_row.addWidget(QLabel("Minecraft:"))
         self.mod_version_filter = QComboBox()
-        self.mod_version_filter.addItem(translate("Все версии", self.locale))
+        self.mod_version_filter.addItem(translate("All versions", self.locale))
         self.mod_version_filter.currentIndexChanged.connect(self._filter_library_table)
         filter_row.addWidget(self.mod_version_filter, 1)
 
         filter_row.addWidget(QLabel(translate("Loader:", self.locale)))
         self.mod_loader_filter = QComboBox()
-        self.mod_loader_filter.addItem(translate("Все загрузчики", self.locale))
+        self.mod_loader_filter.addItem(translate("All loaders", self.locale))
         for ldr in ("Fabric", "Forge", "NeoForge", "Quilt"):
             self.mod_loader_filter.addItem(ldr)
         self.mod_loader_filter.currentIndexChanged.connect(self._filter_library_table)
@@ -1078,15 +1089,18 @@ class MainWindow(QMainWindow):
             self._set_item(self.virtualization_table, row, 2, action.details, action.details.casefold(), str(action.path))
         self.virtualization_table.setSortingEnabled(True)
         self._fit_table_columns(self.virtualization_table)
-        target = str(plan.mods_dir) if plan.mods_dir else "mods folder not found"
-        summary = f"Target folder: {target}"
+        target = str(plan.mods_dir) if plan.mods_dir else translate("mods folder not found", self.locale)
+        summary = translate("Target folder: {path}", self.locale, path=target)
         if plan.errors:
-            summary += "\nProblems: " + "; ".join(plan.errors)
+            summary += "\n" + translate("Problems: ", self.locale) + "; ".join(plan.errors)
         else:
             creates = sum(action.action == "Create link" for action in plan.actions)
             removes = sum(action.action == "Remove link" for action in plan.actions)
-            summary += f"\nLinks to be created: {creates}; managed links to be removed: {removes}."
-        self.virtualization_path_label.setText(translate(summary, self.locale))
+            summary += "\n" + translate(
+                "Links to be created: {created}; managed links to be removed: {removed}.",
+                self.locale, created=creates, removed=removes
+            )
+        self.virtualization_path_label.setText(summary)
         self.apply_virtualization_button.setEnabled(plan.can_apply)
 
     def apply_selected_profile(self) -> None:
@@ -1103,9 +1117,13 @@ class MainWindow(QMainWindow):
         removes = sum(action.action == "Remove link" for action in plan.actions)
         answer = QMessageBox.warning(
             self, "Apply profile",
-            f"Apply profile «{profile.get('name', '')}»?\n\n"
-            f"Links to be created: {creates}; MineOrganizer links to remove: {removes}.\n"
-            "Regular files will remain unchanged. Close Minecraft before continuing.",
+            translate(
+                "Apply profile «{name}»?\n\nLinks to be created: {created}; MineOrganizer links to remove: {removed}.\nRegular files will remain unchanged. Close Minecraft before continuing.",
+                self.locale,
+                name=profile.get('name', ''),
+                created=creates,
+                removed=removes,
+            ),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
             QMessageBox.StandardButton.Cancel,
         )
@@ -1163,7 +1181,7 @@ class MainWindow(QMainWindow):
         """Show saves from the shared library."""
         if not hasattr(self, "saves_table"):
             return
-        self.saves_path_label.setText(translate(f"Save library: {self.save_library_dir}", self.locale))
+        self.saves_path_label.setText(translate("Save library: {path}", self.locale, path=self.save_library_dir))
         entries = scan_saves(self.save_library_dir)
         self.saves_table.setSortingEnabled(False)
         self.saves_table.setRowCount(len(entries))
@@ -1202,7 +1220,7 @@ class MainWindow(QMainWindow):
             answer = QMessageBox.warning(
                 self,
                 "The save already exists",
-                f'World "{source_path.name}" already exists in the selected environment. Overwrite it?',
+                translate('World "{name}" already exists in the selected environment. Overwrite it?', self.locale, name=source_path.name),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel,
                 QMessageBox.StandardButton.Cancel,
             )
@@ -1284,14 +1302,17 @@ class MainWindow(QMainWindow):
                 self._set_item(self.asset_plan_table, row, column, value, value.casefold(), str(action.path))
         self.asset_plan_table.setSortingEnabled(True)
         self._fit_table_columns(self.asset_plan_table)
-        summary = f"Target folder: {plan.target_dir}"
+        summary = translate("Target folder: {path}", self.locale, path=plan.target_dir)
         if plan.errors:
-            summary += "\nProblems: " + "; ".join(plan.errors)
+            summary += "\n" + translate("Problems: ", self.locale) + "; ".join(plan.errors)
         else:
             creates = sum(action.action == "Create link" for action in plan.actions)
             removes = sum(action.action == "Remove link" for action in plan.actions)
-            summary += f"\nLinks to be created: {creates}; managed links removed: {removes}."
-        self.asset_preview_label.setText(translate(summary, self.locale))
+            summary += "\n" + translate(
+                "Links to be created: {created}; managed links removed: {removed}.",
+                self.locale, created=creates, removed=removes
+            )
+        self.asset_preview_label.setText(summary)
         self.asset_apply_button.setEnabled(plan.can_apply)
 
     def apply_selected_assets(self) -> None:
@@ -1462,8 +1483,10 @@ class MainWindow(QMainWindow):
             finding.status == "External mod — not imported" for finding in findings
         )
         self.status_label.setText(translate(
-            f"Environment check completed: {len(findings)} records, "
-            f"external mods not imported: {external_count}", self.locale
+            "Environment check completed: {records} records, external mods not imported: {external}",
+            self.locale,
+            records=len(findings),
+            external=external_count,
         ))
 
     @staticmethod
@@ -1576,7 +1599,7 @@ class MainWindow(QMainWindow):
             elif chosen == open_folder:
                 self._open_selected_path(table)
         elif table is self.table or table is self.environment_table:
-            analyze = menu.addAction(translate("Анализ крашей и логов…", self.locale))
+            analyze = menu.addAction(translate("Analyze crash & logs…", self.locale))
             open_folder = menu.addAction(translate("Open folder", self.locale))
             copy_path = menu.addAction(translate("Copy path", self.locale))
             chosen = menu.exec(table.viewport().mapToGlobal(position))
@@ -1685,7 +1708,11 @@ class MainWindow(QMainWindow):
         if self._path_is_link_target(path):
             QMessageBox.warning(self, "Deletion is not allowed", "The mod is currently used by a symbolic link in a game environment. Remove it from the active profile first.")
             return
-        answer = QMessageBox.question(self, "Delete mod", f'Delete "{path.name}" from the shared library? Profiles containing this mod will lose their reference to it.', QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Cancel)
+        answer = QMessageBox.question(
+            self, "Delete mod",
+            translate('Delete "{name}" from the shared library? Profiles containing this mod will lose their reference to it.', self.locale, name=path.name),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Cancel
+        )
         if answer != QMessageBox.StandardButton.Yes:
             return
         try:
@@ -1732,7 +1759,11 @@ class MainWindow(QMainWindow):
         if self._path_is_link_target(path):
             QMessageBox.warning(self, "Deletion is not allowed", "The archive is used by a symbolic link. Remove it from the active profile first.")
             return
-        answer = QMessageBox.question(self, "Delete archive", f'Delete "{path.name}" from the library? Profiles containing it will no longer be able to apply this archive.', QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Cancel)
+        answer = QMessageBox.question(
+            self, "Delete archive",
+            translate('Delete "{name}" from the library? Profiles containing it will no longer be able to apply this archive.', self.locale, name=path.name),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel, QMessageBox.StandardButton.Cancel
+        )
         if answer != QMessageBox.StandardButton.Yes:
             return
         try:
@@ -1775,7 +1806,7 @@ class MainWindow(QMainWindow):
             return
         target = instances_dir / name
         if target.exists():
-            QMessageBox.warning(self, "Folder already exists", f"The folder already exists:\n{target}")
+            QMessageBox.warning(self, "Folder already exists", translate("The folder already exists:\n{target}", self.locale, target=target))
             return
         try:
             for folder in ("mods", "config", "resourcepacks", "shaderpacks", "saves"):
@@ -1792,9 +1823,12 @@ class MainWindow(QMainWindow):
         self.refresh_instances()
         QMessageBox.information(
             self, "Instance created",
-            "The instance folder was created. Now open the official Minecraft Launcher, "
-            "edit the required installation, and set this path in the Game Directory field:\n\n"
-            f"{target}\n\nMods and settings for this installation will be stored separately."
+            translate(
+                "The instance folder was created. Now open the official Minecraft Launcher, "
+                "edit the required installation, and set this path in the Game Directory field:\n\n"
+                "{target}\n\nMods and settings for this installation will be stored separately.",
+                self.locale, target=target
+            )
         )
 
     def add_game_directory(self) -> None:
@@ -1868,7 +1902,7 @@ class MainWindow(QMainWindow):
             instances.extend(scan_instances(self.prism_data_dir))
             prism_label = f"Prism: {self.prism_data_dir}"
         else:
-            prism_label = "Prism was not found automatically; choose its data folder manually if needed."
+            prism_label = translate("Prism was not found automatically; choose its data folder manually if needed.", self.locale)
 
         configured_dirs = self.user_data.data.setdefault("game_dirs", [])
         known_dirs = {
@@ -1905,10 +1939,11 @@ class MainWindow(QMainWindow):
                     known_paths.add(instance_key)
 
         self.instances = instances
-        self.path_label.setText(translate(
-            prism_label + "\nAutomatic search: Minecraft Launcher / TLauncher (.minecraft), Legacy Launcher, and Prism. For the official launcher, you can create a separate instance and set its path in the installation settings → Game Directory.",
+        hint = translate(
+            "Automatic search: Minecraft Launcher / TLauncher (.minecraft), Legacy Launcher, and Prism. For the official launcher, you can create a separate instance and set its path in the installation settings → Game Directory.",
             self.locale,
-        ))
+        )
+        self.path_label.setText(f"{prism_label}\n{hint}")
         self.table.setRowCount(len(self.instances))
         for row, instance in enumerate(self.instances):
             values = [instance.launcher, instance.name, instance.minecraft_version,
@@ -1918,7 +1953,7 @@ class MainWindow(QMainWindow):
                 self._set_item(self.table, row, column, value, sort_value, str(instance.path))
         self.table.setSortingEnabled(True)
         self._fit_table_columns(self.table)
-        self.status_label.setText(translate(f"Game environments found: {len(self.instances)}", self.locale))
+        self.status_label.setText(translate("Game environments found: {count}", self.locale, count=len(self.instances)))
         self.refresh_profile_instance_choices()
         self.refresh_config_instance_choices()
         self.refresh_environment_scan()
@@ -1959,7 +1994,7 @@ class MainWindow(QMainWindow):
 
     def refresh_library(self) -> None:
         """Scan the library, extract metadata, and show compatibility."""
-        self.library_path_label.setText(translate(f"Library: {self.library_dir}", self.locale))
+        self.library_path_label.setText(translate("Library: {path}", self.locale, path=self.library_dir))
         self.library_table.setSortingEnabled(False)
         cache = get_mod_cache()
         scanned_pairs = cache.scan_mods_parallel(self.library_dir)
@@ -2025,7 +2060,7 @@ class MainWindow(QMainWindow):
             }, key=_sort_key, reverse=True)
             self.mod_version_filter.blockSignals(True)
             self.mod_version_filter.clear()
-            self.mod_version_filter.addItem(translate("Все версии", self.locale))
+            self.mod_version_filter.addItem(translate("All versions", self.locale))
             for ver in all_versions:
                 self.mod_version_filter.addItem(ver)
             idx = self.mod_version_filter.findText(current_ver)
@@ -2036,7 +2071,7 @@ class MainWindow(QMainWindow):
         self._filter_library_table()
 
         plugin_count = sum(metadata.kind == "Plugin" for metadata in metadata_by_hash.values())
-        self.status_label.setText(translate(f"Files in library: {len(self.mods)} (plugins: {plugin_count})", self.locale))
+        self.status_label.setText(translate("Files in library: {count} (plugins: {plugins})", self.locale, count=len(self.mods), plugins=plugin_count))
         self.refresh_environment_scan()
         self.preview_selected_profile()
 
@@ -2069,10 +2104,10 @@ class MainWindow(QMainWindow):
         # Check for missing dependencies and offer Modrinth lookup
         missing_dep_names = [
             item.mod_name for item in conflicts
-            if "requires" in item.message.lower() or "требуется" in item.message.lower() or "missing" in item.message.lower()
+            if "requires" in item.message.lower() or "missing" in item.message.lower()
         ]
         if missing_dep_names:
-            prompt = translate("Открыть каталог Modrinth для поиска недостающих зависимостей?", self.locale)
+            prompt = translate("Open the Modrinth catalog to search for missing dependencies?", self.locale)
             reply = QMessageBox.question(
                 self,
                 "Modrinth",
@@ -2146,7 +2181,7 @@ class MainWindow(QMainWindow):
         self.user_data.add_profile(name, instance, dialog.selected_hashes())
         self.refresh_profiles()
         self.status_label.setText(translate(
-            f'Profile "{name.strip()}" created. Game files were not changed.', self.locale
+            'Profile "{name}" created. Game files were not changed.', self.locale, name=name.strip()
         ))
 
     def _profile_row_changed(self, row: int, column: int, previous_row: int, previous_column: int) -> None:
@@ -2204,8 +2239,10 @@ class MainWindow(QMainWindow):
         if profile is None:
             QMessageBox.information(self, "Profiles", "Select a profile first.")
             return
-        answer = QMessageBox.question(self, "Delete profile",
-                                      f'Delete profile "{profile.get("name", "")}"? Game files will not be changed.')
+        answer = QMessageBox.question(
+            self, "Delete profile",
+            translate('Delete profile "{name}"? Game files will not be changed.', self.locale, name=profile.get("name", ""))
+        )
         if answer == QMessageBox.StandardButton.Yes:
             self.user_data.delete_profile(profile["id"])
             self.refresh_profiles()
@@ -2304,14 +2341,16 @@ class MainWindow(QMainWindow):
                 self.refresh_virtualization_profiles()
 
         if profile is not None and added_to_profile > 0:
-            msg = translate("Добавлено модов в профиль «{name}»: {count}.", self.locale).format(
+            msg = translate(
+                'Added {count} mod(s) to profile "{name}".', self.locale,
                 name=profile.get("name", ""), count=added_to_profile
             )
         else:
             msg = translate(
-                "Импортировано: {imported}\nПропущено: {skipped}\n\nПодсказка: Выберите профиль, чтобы перетащенные моды добавились в него автоматически.",
+                "Imported: {imported}\nSkipped: {skipped}\n\nTip: Select a profile first if you want dropped mods to be automatically added to it.",
                 self.locale,
-            ).format(imported=imported, skipped=skipped)
+                imported=imported, skipped=skipped
+            )
         if errors:
             msg += "\n\n" + "\n".join(errors[:10])
         QMessageBox.information(self, "Mod import", msg)
@@ -2322,12 +2361,12 @@ class MainWindow(QMainWindow):
             return
         query = self.mod_search_input.text().strip().casefold()
         ver_text = self.mod_version_filter.currentText()
-        all_ver_txt = translate("Все версии", self.locale)
-        ver_filter = "" if ver_text in ("Все версии", "All versions", all_ver_txt) else ver_text.casefold()
+        all_ver_txt = translate("All versions", self.locale)
+        ver_filter = "" if ver_text in ("All versions", all_ver_txt) else ver_text.casefold()
 
         ldr_text = self.mod_loader_filter.currentText()
-        all_ldr_txt = translate("Все загрузчики", self.locale)
-        ldr_filter = "" if ldr_text in ("Все загрузчики", "All loaders", all_ldr_txt) else ldr_text.casefold()
+        all_ldr_txt = translate("All loaders", self.locale)
+        ldr_filter = "" if ldr_text in ("All loaders", all_ldr_txt) else ldr_text.casefold()
 
         total = self.library_table.rowCount()
         visible = 0
@@ -2358,8 +2397,8 @@ class MainWindow(QMainWindow):
                 visible += 1
 
         if query or ver_filter or ldr_filter:
-            status_fmt = translate("Отображается: {visible} из {total} модов", self.locale)
-            self.library_filter_status.setText(status_fmt.format(visible=visible, total=total))
+            status_fmt = translate("Showing: {visible} of {total} mods", self.locale, visible=visible, total=total)
+            self.library_filter_status.setText(status_fmt)
         else:
             self.library_filter_status.setText("")
 
@@ -2384,7 +2423,7 @@ class MainWindow(QMainWindow):
     def check_library_updates(self) -> None:
         """Check for updates across all mods in the library via Modrinth."""
         if not self.mods:
-            QMessageBox.information(self, "Updates", translate("В библиотеке нет модов.", self.locale))
+            QMessageBox.information(self, "Updates", translate("No mods in the library.", self.locale))
             return
         dialog = ModUpdatesDialog(mods=self.mods, library_dir=self.library_dir, locale=self.locale, parent=self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
@@ -2395,12 +2434,12 @@ class MainWindow(QMainWindow):
         """Check for updates for mods active in the selected profile."""
         profile = self._virtualization_profile() if hasattr(self, "virtualization_profile_combo") else None
         if not profile:
-            QMessageBox.information(self, "Updates", translate("Сначала выберите профиль на вкладке «Виртуализация».", self.locale))
+            QMessageBox.information(self, "Updates", translate("Select a profile on the Virtualization tab first.", self.locale))
             return
         enabled_hashes = set(profile.get("enabled_mod_hashes", []))
         profile_mods = [m for m in self.mods if m.sha256 in enabled_hashes]
         if not profile_mods:
-            QMessageBox.information(self, "Updates", translate("В этом профиле не выбрано ни одного мода.", self.locale))
+            QMessageBox.information(self, "Updates", translate("No mods selected in this profile.", self.locale))
             return
         dialog = ModUpdatesDialog(mods=profile_mods, library_dir=self.library_dir, locale=self.locale, parent=self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
@@ -2435,7 +2474,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "Crash report & log analyzer",
-                translate("Сначала выберите игровое окружение.", self.locale),
+                translate("Select a game environment first.", self.locale),
             )
             return
 
@@ -2460,7 +2499,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "Crash report & log analyzer",
-                translate("Сначала выберите игровое окружение.", self.locale),
+                translate("Select a game environment first.", self.locale),
             )
 
     def analyze_selected_profile_logs(self) -> None:
@@ -2470,7 +2509,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "Crash report & log analyzer",
-                translate("Сначала выберите профиль на вкладке «Виртуализация».", self.locale),
+                translate("Select a profile on the Virtualization tab first.", self.locale),
             )
             return
         target_path_raw = profile.get("target_path") or profile.get("instance_path")
@@ -2478,7 +2517,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "Crash report & log analyzer",
-                translate("Сначала выберите игровое окружение.", self.locale),
+                translate("Select a game environment first.", self.locale),
             )
             return
         target_path = Path(str(target_path_raw))
@@ -2494,7 +2533,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 "Export modpack",
-                translate("Сначала выберите профиль на вкладке «Виртуализация».", self.locale),
+                translate("Select a profile on the Virtualization tab first.", self.locale),
             )
             return
 
@@ -2527,9 +2566,9 @@ class MainWindow(QMainWindow):
         default_filename = f"{profile.get('name', 'Modpack')}.morgpack"
         selected, _ = QFileDialog.getSaveFileName(
             self,
-            translate("Экспорт профиля в модпак", self.locale),
+            translate("Export profile to modpack", self.locale),
             str(Path.home() / default_filename),
-            translate("Архивы модпаков (*.morgpack *.zip *.mrpack)", self.locale),
+            translate("Modpack archives (*.morgpack *.zip *.mrpack)", self.locale),
         )
         if not selected:
             return
@@ -2548,27 +2587,27 @@ class MainWindow(QMainWindow):
         )
 
         parts = [
-            f"{translate('Модов:', self.locale)} {res['mods_count']}",
+            f"{translate('Mods:', self.locale)} {res['mods_count']}",
         ]
         if res.get("configs_count"):
-            parts.append(f"{translate('Конфигов:', self.locale)} {res['configs_count']}")
+            parts.append(f"{translate('Configs:', self.locale)} {res['configs_count']}")
         if res.get("resourcepacks_count"):
-            parts.append(f"{translate('Ресурспаков:', self.locale)} {res['resourcepacks_count']}")
+            parts.append(f"{translate('Resource packs:', self.locale)} {res['resourcepacks_count']}")
         if res.get("shaderpacks_count"):
-            parts.append(f"{translate('Шейдеров:', self.locale)} {res['shaderpacks_count']}")
+            parts.append(f"{translate('Shaders:', self.locale)} {res['shaderpacks_count']}")
         if res.get("saves_count"):
-            parts.append(f"{translate('Миров:', self.locale)} {res['saves_count']}")
+            parts.append(f"{translate('Worlds:', self.locale)} {res['saves_count']}")
 
-        success_msg = translate("Модпак успешно экспортирован:\n", self.locale) + "\n".join(parts)
-        QMessageBox.information(self, translate("Экспорт завершён", self.locale), success_msg)
+        success_msg = translate("Modpack successfully exported:\n", self.locale) + "\n".join(parts)
+        QMessageBox.information(self, translate("Export completed", self.locale), success_msg)
 
     def import_modpack(self) -> None:
         """Import a complete modpack archive into libraries, environment, and user_data."""
         selected, _ = QFileDialog.getOpenFileName(
             self,
-            translate("Импорт сборки…", self.locale),
+            translate("Import modpack…", self.locale),
             str(Path.home()),
-            translate("Архивы модпаков (*.morgpack *.zip *.mrpack)", self.locale) + ";;All files (*.*)",
+            translate("Modpack archives (*.morgpack *.zip *.mrpack)", self.locale) + ";;All files (*.*)",
         )
         if not selected:
             return
@@ -2580,10 +2619,10 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Import modpack", f"Could not read modpack archive: {err}")
             return
 
-        prompt = translate("Название профиля для импорта:", self.locale)
+        prompt = translate("Import profile name:", self.locale)
         profile_name, accepted = QInputDialog.getText(
             self,
-            translate("Импорт сборки…", self.locale),
+            translate("Import modpack…", self.locale),
             prompt,
             text=info.get("name") or archive_path.stem,
         )
@@ -2622,17 +2661,17 @@ class MainWindow(QMainWindow):
         self.refresh_assets()
 
         parts = [
-            f"{translate('Модов:', self.locale)} {res['mods_imported']}",
+            f"{translate('Mods:', self.locale)} {res['mods_imported']}",
         ]
         if res.get("resourcepacks_imported"):
-            parts.append(f"{translate('Ресурспаков:', self.locale)} {res['resourcepacks_imported']}")
+            parts.append(f"{translate('Resource packs:', self.locale)} {res['resourcepacks_imported']}")
         if res.get("shaderpacks_imported"):
-            parts.append(f"{translate('Шейдеров:', self.locale)} {res['shaderpacks_imported']}")
+            parts.append(f"{translate('Shaders:', self.locale)} {res['shaderpacks_imported']}")
         if res.get("configs_extracted"):
-            parts.append(f"{translate('Конфигов:', self.locale)} {res['configs_extracted']}")
+            parts.append(f"{translate('Configs:', self.locale)} {res['configs_extracted']}")
         if res.get("saves_imported"):
-            parts.append(f"{translate('Миров:', self.locale)} {res['saves_imported']}")
+            parts.append(f"{translate('Worlds:', self.locale)} {res['saves_imported']}")
 
-        title_msg = translate("Модпак «{name}» успешно импортирован!\n", self.locale).format(name=profile_name.strip())
+        title_msg = translate('Modpack "{name}" successfully imported!\n', self.locale, name=profile_name.strip())
         success_msg = title_msg + "\n".join(parts)
-        QMessageBox.information(self, translate("Импорт завершён", self.locale), success_msg)
+        QMessageBox.information(self, translate("Import completed", self.locale), success_msg)

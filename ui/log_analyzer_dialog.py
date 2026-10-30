@@ -47,7 +47,7 @@ class CrashLogAnalyzerDialog(QDialog):
         self.locale = locale
         self.current_analysis: CrashAnalysis | None = None
 
-        title = translate("Анализатор крашей и логов", self.locale)
+        title = translate("Crash & Log Analyzer", self.locale)
         self.setWindowTitle(f"{title} — {self.instance_name}")
         self.setWindowIcon(QIcon(str(app_icon_path())))
         self.resize(920, 640)
@@ -56,17 +56,17 @@ class CrashLogAnalyzerDialog(QDialog):
 
         # File selector row
         top_row = QHBoxLayout()
-        top_row.addWidget(QLabel(translate("Файл лога:", self.locale)))
+        top_row.addWidget(QLabel(translate("Log file:", self.locale)))
 
         self.file_combo = QComboBox()
         self.file_combo.currentIndexChanged.connect(self._on_file_selected)
         top_row.addWidget(self.file_combo, 1)
 
-        self.open_editor_btn = QPushButton(translate("Открыть файл", self.locale))
+        self.open_editor_btn = QPushButton(translate("Open file", self.locale))
         self.open_editor_btn.clicked.connect(self._open_in_editor)
         top_row.addWidget(self.open_editor_btn)
 
-        self.open_folder_btn = QPushButton(translate("Открыть папку", self.locale))
+        self.open_folder_btn = QPushButton(translate("Open folder", self.locale))
         self.open_folder_btn.clicked.connect(self._open_in_folder)
         top_row.addWidget(self.open_folder_btn)
 
@@ -119,9 +119,9 @@ class CrashLogAnalyzerDialog(QDialog):
         log_layout.setContentsMargins(0, 0, 0, 0)
 
         search_row = QHBoxLayout()
-        search_row.addWidget(QLabel(translate("Фильтр текста:", self.locale)))
+        search_row.addWidget(QLabel(translate("Text filter:", self.locale)))
         self.log_search_input = QLineEdit()
-        self.log_search_input.setPlaceholderText(translate("Поиск по логу…", self.locale))
+        self.log_search_input.setPlaceholderText(translate("Search log…", self.locale))
         self.log_search_input.setClearButtonEnabled(True)
         self.log_search_input.textChanged.connect(self._highlight_search_text)
         search_row.addWidget(self.log_search_input, 1)
@@ -141,17 +141,17 @@ class CrashLogAnalyzerDialog(QDialog):
 
         # Bottom buttons
         bottom_bar = QHBoxLayout()
-        self.copy_summary_btn = QPushButton(translate("Копировать сводку", self.locale))
+        self.copy_summary_btn = QPushButton(translate("Copy summary", self.locale))
         self.copy_summary_btn.clicked.connect(self._copy_summary)
         bottom_bar.addWidget(self.copy_summary_btn)
 
-        self.copy_log_btn = QPushButton(translate("Копировать весь лог", self.locale))
+        self.copy_log_btn = QPushButton(translate("Copy full log", self.locale))
         self.copy_log_btn.clicked.connect(self._copy_full_log)
         bottom_bar.addWidget(self.copy_log_btn)
 
         bottom_bar.addStretch(1)
 
-        self.close_btn = QPushButton(translate("Закрыть", self.locale))
+        self.close_btn = QPushButton(translate("Close", self.locale))
         self.close_btn.clicked.connect(self.accept)
         bottom_bar.addWidget(self.close_btn)
 
@@ -165,10 +165,10 @@ class CrashLogAnalyzerDialog(QDialog):
         self.file_combo.clear()
 
         if not files:
-            self.file_combo.addItem(translate("Логи и краш-репорты не найдены", self.locale))
-            self.status_title_label.setText(translate("Логи не найдены", self.locale))
+            self.file_combo.addItem(translate("No logs or crash reports found", self.locale))
+            self.status_title_label.setText(translate("No logs found", self.locale))
             self.status_title_label.setStyleSheet("color: #64748b; font-size: 15px;")
-            self.summary_label.setText(translate("В этом игровом окружении пока нет логов или отчётов о сбоях.", self.locale))
+            self.summary_label.setText(translate("There are no logs or crash reports in this game environment yet.", self.locale))
             self.recommendation_label.setVisible(False)
             self.suspected_mods_label.setVisible(False)
             self.env_details_label.setVisible(False)
@@ -205,17 +205,17 @@ class CrashLogAnalyzerDialog(QDialog):
         else:
             self.status_title_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #047857;")
 
-        self.summary_label.setText(analysis.summary or translate("Критических ошибок не обнаружено.", self.locale))
+        self.summary_label.setText(analysis.summary or translate("No critical errors detected.", self.locale))
 
         if analysis.suspected_mods:
             mods_text = ", ".join(analysis.suspected_mods)
-            self.suspected_mods_label.setText(f"{translate('Подозрительные моды:', self.locale)} {mods_text}")
+            self.suspected_mods_label.setText(f"{translate('Suspected mods:', self.locale)} {mods_text}")
             self.suspected_mods_label.setVisible(True)
         else:
             self.suspected_mods_label.setVisible(False)
 
         if analysis.recommendation:
-            self.recommendation_label.setText(f"💡 {translate('Рекомендуемое действие:', self.locale)}\n{analysis.recommendation}")
+            self.recommendation_label.setText(f"💡 {translate('Recommended action:', self.locale)}\n{analysis.recommendation}")
             self.recommendation_label.setVisible(True)
         else:
             self.recommendation_label.setVisible(False)
@@ -286,8 +286,8 @@ class CrashLogAnalyzerDialog(QDialog):
         QApplication.clipboard().setText(summary_text)
         QMessageBox.information(
             self,
-            translate("Скопировано", self.locale),
-            translate("Сводка диагностики скопирована в буфер обмена.", self.locale),
+            translate("Copied", self.locale),
+            translate("Diagnostic summary copied to clipboard.", self.locale),
         )
 
     def _copy_full_log(self) -> None:
@@ -297,8 +297,8 @@ class CrashLogAnalyzerDialog(QDialog):
             QApplication.clipboard().setText(content)
             QMessageBox.information(
                 self,
-                translate("Скопировано", self.locale),
-                translate("Полный текст лога скопирован в буфер обмена.", self.locale),
+                translate("Copied", self.locale),
+                translate("Full log text copied to clipboard.", self.locale),
             )
 
     def _open_in_editor(self) -> None:
